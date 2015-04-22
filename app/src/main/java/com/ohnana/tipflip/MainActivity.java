@@ -6,20 +6,39 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.protocol.HTTP;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
 
 public class MainActivity extends ActionBarActivity {
 
+    /**
+     * Google Cloud Messaging attributes
+     * */
     public static final String PROPERTY_REG_ID = "registration_id";
     private static final String PROPERTY_APP_VERSION = "appVersion";
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
@@ -29,12 +48,24 @@ public class MainActivity extends ActionBarActivity {
     private Context context;
     private String regid;
 
+    /**
+     * Our attributes
+     * */
+
+    /**
+     * Navigation drawer attributes
+     * */
+    private String[] mDrawerTitles;
+    private DrawerLayout mDrawerLayout;
+    private ListView mDrawerList;
+    private CharSequence mTitle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = getApplicationContext();
-
+        initUI();
         // Check device for Play Services APK. If check succeeds, proceed with GCM registration.
         if (checkPlayServices()) {
             gcm = GoogleCloudMessaging.getInstance(this);
@@ -46,6 +77,59 @@ public class MainActivity extends ActionBarActivity {
         } else {
             Log.i(TAG, "No valid Google Play Services APK found.");
         }
+        if (savedInstanceState == null) {
+            this.selectItem(0); // the first: Home fragment
+        }
+    }
+
+    private void initUI() {
+        mDrawerTitles = getResources().getStringArray(R.array.drawer_titles);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerList = (ListView) findViewById(R.id.left_drawer);
+        mDrawerList.setAdapter(new ArrayAdapter<String>(this,
+                R.layout.drawer_list_item, mDrawerTitles));
+        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+    }
+
+    private class DrawerItemClickListener implements ListView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView parent, View view, int position, long id) {
+            selectItem(position);
+        }
+    }
+
+    /** Swaps fragments in the main content view */
+    private void selectItem(int position) {
+        // Create a new fragment
+        Fragment fragment;
+        switch (position) {
+            case 0:
+                fragment = HomeFragment.getInstance();
+                break;
+            default:
+                fragment = HomeFragment.getInstance();
+        }
+        // Insert the fragment by replacing any existing fragment
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.content_frame, fragment);
+        ft.commit();
+
+        // Highlight the selected item, update the title, and close the drawer
+        mDrawerList.setItemChecked(position, true);
+        setTitle(mDrawerTitles[position]);
+        mDrawerLayout.closeDrawer(mDrawerList);
+    }
+
+    public void pushFragment(CustomFragment fragment) {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.content_frame, fragment);
+        ft.commit();
+    }
+
+    @Override
+    public void setTitle(CharSequence title) {
+        mTitle = title;
+        getSupportActionBar().setTitle(mTitle);
     }
 
     @Override
@@ -205,7 +289,25 @@ public class MainActivity extends ActionBarActivity {
      * messages to your app. Not needed for this demo since the device sends upstream messages
      * to a server that echoes back the message using the 'from' address in the message.
      */
-    private void sendRegistrationIdToBackend() {
-        // Your implementation here.
+    // IS PUBLIC RIGHT NOW BECAUSE WE ARE TESTING
+    public void sendRegistrationIdToBackend() {
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put("regid", regid);
+            DefaultHttpClient httpclient = new DefaultHttpClient();
+            HttpPost httppostreq = new HttpPost("http://tipflip.herokuapp.com/savereg");
+            StringEntity se = new StringEntity(obj.toString());
+            se.setContentType("application/json;charset=UTF-8");
+            se.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, "application/json;charset=UTF-8"));
+            httppostreq.setEntity(se);
+            HttpResponse httpresponse = httpclient.execute(httppostreq);
+            StatusLine statusLine = httpresponse.getStatusLine();
+            int status = statusLine.getStatusCode();
+            if (status != 200)
+                throw new Exception("Received status " + status + ": " + statusLine.getReasonPhrase());
+            Log.i(TAG, "Successfully registered reg id to Node js server");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

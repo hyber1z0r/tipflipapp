@@ -3,4 +3,24 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <array name="drawer_titles">
+        <item>
+            Hjem
+        </item>
+        <item>
+            Din profil
+        </item>
+        <item>
+            Abonner
+        </item>
+        <item>
+            Se tilbud
+        </item>
+        <item>
+            Se lokation
+        </item>
+        <item>
+            Log ud
+        </item>
+    </array>
 </resources>
