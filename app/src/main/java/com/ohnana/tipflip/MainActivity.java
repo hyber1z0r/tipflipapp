@@ -158,6 +158,23 @@ public class MainActivity extends ActionBarActivity {
             case 0:
                 fragment = HomeFragment.getInstance();
                 break;
+            case 1:
+                fragment = ProfileFragment.getInstance();
+                break;
+            case 2:
+                fragment = SubscribeFragment.getInstance();
+                break;
+            case 3:
+                fragment = OffersFragment.getInstance();
+                break;
+            case 4:
+                fragment = LocationFragment.getInstance();
+                break;
+            case 5:
+                // log out!
+                // homefragment because of failure -> should be login fragment in future
+                fragment = HomeFragment.getInstance();
+                break;
             default:
                 fragment = HomeFragment.getInstance();
         }
