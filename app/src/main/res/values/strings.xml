@@ -25,4 +25,6 @@
     </array>
     <string name="drawer_open">Open drawer</string>
     <string name="drawer_close">Close drawer</string>
+    <string name="deleted">Slettet</string>
+    <string name="undo">FORTRYD</string>
 </resources>
