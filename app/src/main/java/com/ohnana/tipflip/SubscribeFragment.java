@@ -9,6 +9,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.hudomju.swipe.SwipeToDismissTouchListener;
 import com.hudomju.swipe.adapter.ListViewAdapter;
 import com.hudomju.swipe.adapter.ViewAdapter;
@@ -30,6 +32,7 @@ public class SubscribeFragment extends CustomFragment implements View.OnClickLis
     private User user;
     private List<String> categories;
     private ListView mListView;
+    private FloatingActionsMenu mFloatingsMenu;
     @Override
     protected boolean canGoBack() {
         return false;
@@ -86,6 +89,22 @@ public class SubscribeFragment extends CustomFragment implements View.OnClickLis
                 }
             }
         });
+
+        mFloatingsMenu = (FloatingActionsMenu) rootView.findViewById(R.id.multiple_actions);
+        final FloatingActionButton item5 = new FloatingActionButton(ma);
+        item5.setTitle("Item 5");
+        item5.setColorNormalResId(R.color.white);
+        item5.setColorPressedResId(R.color.white_pressed);
+        item5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                items.add(item5.getTitle());
+                mFloatingsMenu.collapse();
+                mFloatingsMenu.removeButton(item5);
+            }
+        });
+        mFloatingsMenu.addButton(item5);
+
         // at bottom
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint("http://tipflip.herokuapp.com")
