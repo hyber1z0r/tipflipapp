@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -20,10 +21,14 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
@@ -37,7 +42,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
 
     /**
      * Google Cloud Messaging attributes
@@ -52,8 +58,22 @@ public class MainActivity extends ActionBarActivity {
     private String regid;
 
     /**
-     * Our attributes
-     * */
+     * Location attributes
+     */
+    private Location mLastLocation;
+
+    // Google client to interact with Google API
+    private GoogleApiClient mGoogleApiClient;
+
+    // boolean flag to toggle periodic location updates
+    private boolean mRequestingLocationUpdates = false;
+
+    private LocationRequest mLocationRequest;
+
+    // Location updates intervals in sec
+    private static int UPDATE_INTERVAL = 10000; // 10 sec
+    private static int FATEST_INTERVAL = 5000; // 5 sec
+    private static int DISPLACEMENT = 10; // 10 meters
 
     /**
      * Navigation drawer attributes
@@ -79,12 +99,19 @@ public class MainActivity extends ActionBarActivity {
             if (regid.isEmpty()) {
                 registerInBackground();
             }
+            buildGoogleApiClient();
         } else {
             Log.i(TAG, "No valid Google Play Services APK found.");
         }
         if (savedInstanceState == null) {
             selectItem(0); // the first: Home fragment
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        //connectToGooglePlay();
     }
 
     private void init() {
@@ -122,7 +149,50 @@ public class MainActivity extends ActionBarActivity {
         getSupportActionBar().setIcon(R.drawable.ic_drawer);
         getSupportActionBar().setDefaultDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
+    }
 
+    /**
+     * Creating google api client object
+     */
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API).build();
+    }
+
+    private void displayLocation() {
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+
+        if (mLastLocation != null) {
+            double latitude = mLastLocation.getLatitude();
+            double longitude = mLastLocation.getLongitude();
+            Toast.makeText(context, "Your location: " + latitude + " ," + longitude, Toast.LENGTH_LONG).show();
+        } else {
+            // no location available -> check phone settings
+        }
+    }
+
+    public void connectToGooglePlay() {
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.connect();
+        }
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        displayLocation();
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Log.i(TAG, "Connection failed: ConnectionResult.getErrorCode() = "
+                + connectionResult.getErrorCode());
     }
 
     /**
@@ -140,6 +210,7 @@ public class MainActivity extends ActionBarActivity {
         super.onConfigurationChanged(newConfig);
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
+
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override

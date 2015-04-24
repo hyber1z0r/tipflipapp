@@ -48,8 +48,8 @@ public class GcmIntentService extends IntentService {
                 case GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE:
                     Log.i(TAG, "Completed work @ " + SystemClock.elapsedRealtime());
                     // Post notification of received message.
-                    sendNotification("Received: " + extras.get("string"));
-                    Log.i(TAG, "Received: " + extras.get("string"));
+                    sendNotification("Tilbud på " + extras.get("category"));
+                    Log.i(TAG, "Received: " + extras.get("category"));
                     break;
             }
         }
@@ -68,13 +68,13 @@ public class GcmIntentService extends IntentService {
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.mipmap.ic_launcher) /* MUST! */
-                .setContentTitle("GCM Notification") /* MUST! */
+                .setContentTitle("TipFlip") /* MUST! */
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(msg))
                 .setContentText(msg); /* MUST! */
 
-        mBuilder.setVibrate(new long[]{0, 1500, 100, 250, 100,250});
+        mBuilder.setVibrate(new long[]{0, 1500, 100, 250, 100, 250});
         mBuilder.setLights(Color.GREEN, 200, 200);
-     //sets the notification sound to kaching sound
+        //sets the notification sound to kaching sound
         Uri sound = Uri.parse("android.resource://com.ohnana.tipflip/" + R.raw.cashregister1);
         mBuilder.setSound(sound);
         mBuilder.setContentIntent(contentIntent);
