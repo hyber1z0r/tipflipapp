@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -71,9 +72,10 @@ public class GcmIntentService extends IntentService {
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(msg))
                 .setContentText(msg); /* MUST! */
 
-        mBuilder.setVibrate(new long[]{1000, 2000, 500, 500});
-        mBuilder.setLights(Color.GREEN, 3000, 3000);
-        Uri sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+        mBuilder.setVibrate(new long[]{0, 1500, 100, 250, 100,250});
+        mBuilder.setLights(Color.GREEN, 200, 200);
+     //sets the notification sound to kaching sound
+        Uri sound = Uri.parse("android.resource://com.ohnana.tipflip/" + R.raw.cashregister1);
         mBuilder.setSound(sound);
         mBuilder.setContentIntent(contentIntent);
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
