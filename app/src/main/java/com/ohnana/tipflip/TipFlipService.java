@@ -14,5 +14,5 @@ public interface TipFlipService {
     void getProfile(@Query("name") String name, Callback<User> cb);
 
     @GET("/categories")
-    void getCategories(Callback<List<String>> cb);
+    void getCategories(Callback<List<Category>> cb);
 }
