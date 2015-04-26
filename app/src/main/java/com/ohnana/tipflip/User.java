@@ -7,9 +7,11 @@ import java.util.List;
  */
 public class User {
     private String name, _id, regID;
-    private List<String> offers, categories;
+    private List<String> offers;
+    private List<Category> categories;
+    // for now its string, but should be category objects
 
-    public User(String _id, String name, String regID, List<String> offers, List<String> categories) {
+    public User(String _id, String name, String regID, List<String> offers, List<Category> categories) {
         this._id = _id;
         this.name = name;
         this.regID = regID;
@@ -17,7 +19,7 @@ public class User {
         this.categories = categories;
     }
 
-    public List<String> getCategories() {
+    public List<Category> getCategories() {
         return categories;
     }
 
