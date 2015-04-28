@@ -1,9 +1,12 @@
 package com.ohnana.tipflip;
 
+import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -19,6 +22,7 @@ public class LocationFragment extends CustomFragment implements View.OnClickList
 
     private MainActivity ma;
     private static LocationFragment instance;
+    private static String TAG = "LocationFragment";
 
 
     @Override
@@ -31,19 +35,12 @@ public class LocationFragment extends CustomFragment implements View.OnClickList
         View rootView = inflater.inflate(R.layout.location_view, container, false);
         ma = (MainActivity) getActivity();
 
-
-       // Location location = ma.displayLocation();
-       // LatLng YOU = new LatLng(location.getLatitude(), location.getLongitude());
-       //   Marker youarehere = map.addMarker(new MarkerOptions().position(YOU)
-          //        .title("Du er her"));
-        // Move the camera instantly to hamburg with a zoom of 15.
-        //     map.moveCamera(CameraUpdateFactory.newLatLngZoom(YOU, 15));
-        // Zoom in, animating the camera.
-        //      map.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
-
         SupportMapFragment mapFragment = (SupportMapFragment) ma.getSupportFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-
+        if (mapFragment == null) {
+            Log.i(TAG, "MAPFRAGMENT IS NULL");
+        } else {
+            mapFragment.getMapAsync(this);
+        }
 
         return rootView;
     }
@@ -70,7 +67,7 @@ public class LocationFragment extends CustomFragment implements View.OnClickList
 
     @Override
     public void onMapReady(GoogleMap map) {
-        LatLng sydney = new LatLng(-33.867, 151.206);
+/*        LatLng sydney = new LatLng(-33.867, 151.206);
 
         map.setMyLocationEnabled(true);
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 13));
@@ -78,7 +75,18 @@ public class LocationFragment extends CustomFragment implements View.OnClickList
         map.addMarker(new MarkerOptions()
                 .title("Sydney")
                 .snippet("The most populous city in Australia.")
-                .position(sydney));
+                .position(sydney));*/
 
+        Location location = ma.getLocation();
+        if(location == null) {
+            Toast.makeText(ma, "GPS not enabled", Toast.LENGTH_LONG).show();
+        } else {
+            LatLng YOU = new LatLng(location.getLatitude(), location.getLongitude());
+            map.addMarker(new MarkerOptions().position(YOU).title("Du er her"));
+            //Move the camera instantly to hamburg with a zoom of 15.
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(YOU, 15));
+            // Zoom in, animating the camera.
+            map.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
+        }
     }
 }

@@ -1,6 +1,5 @@
 package com.ohnana.tipflip;
 
-import android.app.FragmentManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -166,7 +165,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
                 .addApi(LocationServices.API).build();
     }
 
-    public Location displayLocation() {
+    public Location getLocation() {
         connectToGooglePlay();
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
@@ -189,7 +188,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
 
     @Override
     public void onConnected(Bundle bundle) {
-        displayLocation();
+        getLocation();
     }
 
     @Override

@@ -8,12 +8,12 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-    <uses-permission android:name="com.ohnana.tipflip.android.locationapi.maps.permission.MAPS_RECEIVE"/>
+    <uses-permission android:name="com.ohnana.tipflip.android.locationapi.maps.permission.MAPS_RECEIVE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="com.ohnana.map.permission.MAPS_RECEIVE" />
-
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
 
     <permission
@@ -22,6 +22,7 @@
     <permission
         android:name="com.ohnana.map.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
+
     <uses-permission android:name="com.ohnana.tipflip.permission.C2D_MESSAGE" />
 
 
@@ -30,6 +31,13 @@
         android:icon="@mipmap/ic_launcher_tf"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyCjMpbqlwrlkWg9DCkgulVzlaHOKOlr5Dc" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
         <receiver
             android:name=".GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND">
@@ -42,12 +50,6 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name">
-            <meta-data
-                android:name="com.google.android.maps.v2.API_KEY"
-                android:value="AIzaSyBkJG4QVpdpCfXvJholFYhYooyxMe5DD8M"/>
-            <meta-data
-                android:name="com.google.android.gms.version"
-                android:value="@integer/google_play_services_version" />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
