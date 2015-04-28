@@ -108,6 +108,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
             selectItem(0); // the first: Home fragment
         }
 
+        getLocation();
         // initialising the object of the FragmentManager.
         fragmentManager = getSupportFragmentManager();
     }
@@ -165,7 +166,9 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
                 .addApi(LocationServices.API).build();
     }
 
-    public Location getLocation() {
+    public Location getLastLocation() { return mLastLocation; }
+
+    private Location getLocation() {
         connectToGooglePlay();
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
