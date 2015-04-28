@@ -17,10 +17,10 @@
 
 
     <permission
-        android:name="com.ohnana.map.permission.MAPS_RECEIVE"
+        android:name="com.ohnana.tipflip.permission.MAPS_RECEIVE"
         android:protectionLevel="signature" />
     <permission
-        android:name="com.ohnana.map.permission.C2D_MESSAGE"
+        android:name="com.ohnana.tipflip.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
 
     <uses-permission android:name="com.ohnana.tipflip.permission.C2D_MESSAGE" />

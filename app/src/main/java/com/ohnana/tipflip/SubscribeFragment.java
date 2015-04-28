@@ -1,11 +1,21 @@
 package com.ohnana.tipflip;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -14,7 +24,6 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import com.hudomju.swipe.SwipeToDismissTouchListener;
 import com.hudomju.swipe.adapter.ListViewAdapter;
-import com.hudomju.swipe.adapter.ViewAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,10 +32,6 @@ import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
-
-/**
- * TODO: Fix when swiping item, to add back to buttongroup.
- */
 
 public class SubscribeFragment extends CustomFragment {
 
@@ -57,7 +62,7 @@ public class SubscribeFragment extends CustomFragment {
     }
 
     private void init(View rootView) {
-        mListView = (ListView) rootView.findViewById(R.id.listView);
+        mListView = (ListView) rootView.findViewById(R.id.listViewSubscribe);
         myAdapter = new CategoryListAdapter(ma, mAdapterItems);
         mListView.setAdapter(myAdapter);
         progressView = (CircularProgressView) rootView.findViewById(R.id.progress_view);
@@ -120,9 +125,19 @@ public class SubscribeFragment extends CustomFragment {
 
             @Override
             public void failure(RetrofitError error) {
-
+                showInternetAlert();
             }
         });
+    }
+
+    private void showInternetAlert() {
+        new AlertDialog.Builder(ma)
+                .setTitle("Internet error")
+                .setMessage("No internet connection was found. Try again.")
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton("OK", null)
+                .create().show();
+        progressView.setVisibility(View.GONE);
     }
 
     private void getCategories() {
@@ -143,7 +158,7 @@ public class SubscribeFragment extends CustomFragment {
 
             @Override
             public void failure(RetrofitError error) {
-
+                showInternetAlert();
             }
         });
     }
@@ -152,6 +167,11 @@ public class SubscribeFragment extends CustomFragment {
         final FloatingActionButton newButton = new FloatingActionButton(ma);
         String catTitle = c.getCategory();
         String output = catTitle.substring(0, 1).toUpperCase() + catTitle.substring(1);
+        String base64Image = c.getImage();
+        byte[] image = Base64.decode(base64Image, Base64.DEFAULT);
+        Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
+
+        newButton.setImageBitmap(getCroppedBitmap(bitmap));
         newButton.setTitle(output);
         newButton.setColorNormalResId(R.color.white);
         newButton.setColorPressedResId(R.color.white_pressed);
@@ -166,6 +186,28 @@ public class SubscribeFragment extends CustomFragment {
         });
 
         mFloatingsMenu.addButton(newButton);
+    }
+
+    private Bitmap getCroppedBitmap(Bitmap bitmap) {
+        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
+                bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+
+        final int color = 0xff424242;
+        final Paint paint = new Paint();
+        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        paint.setColor(color);
+        // canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+        canvas.drawCircle(bitmap.getWidth() / 2, bitmap.getHeight() / 2,
+                bitmap.getWidth() / 2, paint);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+        //Bitmap _bmp = Bitmap.createScaledBitmap(output, 60, 60, false);
+        //return _bmp;
+        return output;
     }
 
     private void loadButtons() {

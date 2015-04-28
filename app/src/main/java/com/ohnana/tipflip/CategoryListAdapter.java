@@ -56,7 +56,7 @@ public class CategoryListAdapter extends BaseAdapter {
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
         if (convertView == null) {
-            convertView = inflater.inflate(R.layout.listview_item, null);
+            convertView = inflater.inflate(R.layout.listview_catitem, null);
         }
 
         TextView title = (TextView) convertView.findViewById(R.id.list_item_text);
