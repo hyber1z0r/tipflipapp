@@ -1,5 +1,6 @@
 package com.ohnana.tipflip;
 
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -84,6 +85,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
     private CharSequence mTitle;
     private CharSequence mDrawerTitle;
     private ActionBarDrawerToggle mDrawerToggle;
+    public static android.support.v4.app.FragmentManager fragmentManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,6 +108,9 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
         if (savedInstanceState == null) {
             selectItem(0); // the first: Home fragment
         }
+
+        // initialising the object of the FragmentManager.
+        fragmentManager = getSupportFragmentManager();
     }
 
     @Override
@@ -161,19 +166,22 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
                 .addApi(LocationServices.API).build();
     }
 
-    private void displayLocation() {
+    public Location displayLocation() {
+        connectToGooglePlay();
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
         if (mLastLocation != null) {
             double latitude = mLastLocation.getLatitude();
             double longitude = mLastLocation.getLongitude();
             Toast.makeText(context, "Your location: " + latitude + " ," + longitude, Toast.LENGTH_LONG).show();
+            return mLastLocation;
         } else {
             // no location available -> check phone settings
+            return null;
         }
     }
 
-    public void connectToGooglePlay() {
+    private void connectToGooglePlay() {
         if (mGoogleApiClient != null) {
             mGoogleApiClient.connect();
         }
@@ -362,6 +370,8 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
         }
         return registrationId;
     }
+
+
 
     /**
      * Registers the application with GCM servers asynchronously.
