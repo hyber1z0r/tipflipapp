@@ -28,4 +28,5 @@ dependencies {
     compile 'com.squareup.retrofit:retrofit:1.9.0'
     compile 'com.hudomju:swipe-to-dismiss-undo:1.0'
     compile 'com.getbase:floatingactionbutton:1.9.0'
+    compile 'com.github.rahatarmanahmed:circularprogressview:2.2.0'
 }

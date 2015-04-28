@@ -5,11 +5,12 @@ package com.ohnana.tipflip;
  */
 public class Category {
 
-    private String _id, category;
+    private String _id, category, image;
 
-    public Category(String _id, String category){
+    public Category(String _id, String category, String image) {
         this._id = _id;
         this.category = category;
+        this.image = image;
     }
 
     public String get_id() {
@@ -18,6 +19,10 @@ public class Category {
 
     public String getCategory() {
         return category;
+    }
+
+    public String getImage() {
+        return image;
     }
 
 }

@@ -1,20 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/lyt_container"
     android:background="@color/gray_background">
 
-    <TextView
+
+    <!-- Make these two inside a relativ layout -->
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:height="@dimen/list_item_height"
-        android:gravity="center_vertical"
-        android:paddingLeft="@dimen/list_item_padding_sides"
-        android:paddingRight="@dimen/list_item_padding_sides"
-        android:id="@+id/txt_data"
-        android:background="@android:color/white"/>
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:id="@+id/list_item_image"
+            android:layout_gravity="center_vertical"
+            android:background="@android:color/white"
+            android:padding="10dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:height="@dimen/list_item_height"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/list_item_padding_sides"
+            android:paddingRight="@dimen/list_item_padding_sides"
+            android:id="@+id/list_item_text"
+            android:background="@android:color/white"
+            android:layout_toEndOf="@+id/list_item_image"
+            android:textSize="16sp" />
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -35,7 +51,7 @@
             android:clickable="false"
             android:layout_weight="2"
             android:hapticFeedbackEnabled="true"
-            android:textColor="@android:color/white"/>
+            android:textColor="@android:color/white" />
 
         <TextView
             android:layout_width="0dp"
@@ -45,7 +61,7 @@
             android:text="@string/undo"
             android:clickable="false"
             android:layout_weight="1"
-            android:textColor="@color/yellow"/>
+            android:textColor="@color/yellow" />
 
     </LinearLayout>
 

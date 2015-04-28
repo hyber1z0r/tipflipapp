@@ -9,7 +9,6 @@ public class User {
     private String name, _id, regID;
     private List<String> offers;
     private List<Category> categories;
-    // for now its string, but should be category objects
 
     public User(String _id, String name, String regID, List<String> offers, List<Category> categories) {
         this._id = _id;

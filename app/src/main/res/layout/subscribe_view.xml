@@ -11,7 +11,7 @@
         android:text="This is the subscribe view"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:textSize="24dp"
+        android:textSize="24sp"
         android:id="@+id/textView" />
 
     <ListView
@@ -20,10 +20,16 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/textView" />
 
+    <com.github.rahatarmanahmed.cpv.CircularProgressView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/progress_view"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:cpv_indeterminate="true"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
     <!--ActionButton-->
-
-
-
     <com.getbase.floatingactionbutton.FloatingActionsMenu
         android:id="@+id/multiple_actions"
         android:layout_width="wrap_content"

@@ -2,10 +2,14 @@ package com.ohnana.tipflip;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -42,6 +46,7 @@ public class CategoryListAdapter extends BaseAdapter {
     public void updateData(List<Category> categories) {
         this.categories.clear();
         this.categories.addAll(categories);
+        this.notifyDataSetChanged();
     }
 
     @Override
@@ -54,13 +59,21 @@ public class CategoryListAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.listview_item, null);
         }
 
-        TextView title = (TextView) convertView.findViewById(R.id.txt_data);
+        TextView title = (TextView) convertView.findViewById(R.id.list_item_text);
         // getting category data for the row
         Category c = categories.get(position);
+
+        // title
         String catTitle = c.getCategory();
         String output = catTitle.substring(0, 1).toUpperCase() + catTitle.substring(1);
-        // title
         title.setText(output);
+
+        // image
+        String base64Image = c.getImage();
+        byte[] image = Base64.decode(base64Image, Base64.DEFAULT);
+        Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
+        ImageView imageView = (ImageView) convertView.findViewById(R.id.list_item_image);
+        imageView.setImageBitmap(bitmap);
 
         return convertView;
     }

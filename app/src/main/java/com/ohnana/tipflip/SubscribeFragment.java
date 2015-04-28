@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
+import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import com.hudomju.swipe.SwipeToDismissTouchListener;
 import com.hudomju.swipe.adapter.ListViewAdapter;
 import com.hudomju.swipe.adapter.ViewAdapter;
@@ -27,7 +28,7 @@ import retrofit.client.Response;
  * TODO: Fix when swiping item, to add back to buttongroup.
  */
 
-public class SubscribeFragment extends CustomFragment implements View.OnClickListener {
+public class SubscribeFragment extends CustomFragment {
 
     private MainActivity ma;
     private static SubscribeFragment instance;
@@ -39,6 +40,7 @@ public class SubscribeFragment extends CustomFragment implements View.OnClickLis
     private FloatingActionsMenu mFloatingsMenu;
     private List<Category> mAdapterItems = new ArrayList<>();
     private CategoryListAdapter myAdapter;
+    private CircularProgressView progressView;
 
     @Override
     protected boolean canGoBack() {
@@ -48,11 +50,6 @@ public class SubscribeFragment extends CustomFragment implements View.OnClickLis
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.subscribe_view, container, false);
-        int[] clickButtons = new int[]{ // buttons
-        };
-        for (int i : clickButtons) {
-            rootView.findViewById(i).setOnClickListener(this);
-        }
         ma = (MainActivity) getActivity();
         init(rootView);
         loadProfile();
@@ -61,25 +58,26 @@ public class SubscribeFragment extends CustomFragment implements View.OnClickLis
 
     private void init(View rootView) {
         mListView = (ListView) rootView.findViewById(R.id.listView);
-        //final ArrayAdapter<String> myAdapter = new ArrayAdapter<>(ma, R.layout.listview_item, R.id.txt_data, mAdapterItems);
         myAdapter = new CategoryListAdapter(ma, mAdapterItems);
         mListView.setAdapter(myAdapter);
+        progressView = (CircularProgressView) rootView.findViewById(R.id.progress_view);
+        progressView.setVisibility(View.VISIBLE);
 
-        final SwipeToDismissTouchListener touchListener = new SwipeToDismissTouchListener<>(
+        final SwipeToDismissTouchListener<ListViewAdapter> touchListener = new SwipeToDismissTouchListener<>(
                 new ListViewAdapter(mListView),
-                new SwipeToDismissTouchListener.DismissCallbacks() {
+                new SwipeToDismissTouchListener.DismissCallbacks<ListViewAdapter>() {
                     @Override
                     public boolean canDismiss(int position) {
                         return true;
                     }
 
                     @Override
-                    public void onDismiss(ViewAdapter viewAdapter, int i) {
+                    public void onDismiss(ListViewAdapter listViewAdapter, int i) {
                         Category temp = (Category) myAdapter.getItem(i);
                         categories.add(temp);
+                        addButton(temp);
                         mAdapterItems.remove(i);
                         myAdapter.updateData(mAdapterItems);
-                        myAdapter.notifyDataSetChanged();
                     }
                 });
         mListView.setOnTouchListener(touchListener);
@@ -100,13 +98,13 @@ public class SubscribeFragment extends CustomFragment implements View.OnClickLis
         // at bottom
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint("http://tipflip.herokuapp.com")
-                .setLogLevel(RestAdapter.LogLevel.FULL)
+                .setLogLevel(RestAdapter.LogLevel.BASIC)
                 .build();
         service = restAdapter.create(TipFlipService.class);
-
     }
 
     private void loadProfile() {
+        progressView.startAnimation();
         service.getProfile("Jakob", new Callback<User>() {
             @Override
             public void success(User user, Response response) {
@@ -114,12 +112,10 @@ public class SubscribeFragment extends CustomFragment implements View.OnClickLis
                 if (mAdapterItems != null) {
                     mAdapterItems = SubscribeFragment.this.user.getCategories();
                     myAdapter.updateData(mAdapterItems);
-                    myAdapter.notifyDataSetChanged();
                     getCategories();
                 } else {
                     Toast.makeText(ma, "ADAPTERITEMS IS NULL", Toast.LENGTH_SHORT).show();
                 }
-
             }
 
             @Override
@@ -134,6 +130,7 @@ public class SubscribeFragment extends CustomFragment implements View.OnClickLis
             @Override
             public void success(List<Category> categories, Response response) {
                 SubscribeFragment.this.categories = categories;
+
                 for (Category cat : mAdapterItems) {
                     for (int i = 0; i < SubscribeFragment.this.categories.size(); i++) {
                         if (cat.getCategory().equals(SubscribeFragment.this.categories.get(i).getCategory())) {
@@ -151,27 +148,31 @@ public class SubscribeFragment extends CustomFragment implements View.OnClickLis
         });
     }
 
-    private void loadButtons() {
+    private void addButton(final Category c) {
+        final FloatingActionButton newButton = new FloatingActionButton(ma);
+        String catTitle = c.getCategory();
+        String output = catTitle.substring(0, 1).toUpperCase() + catTitle.substring(1);
+        newButton.setTitle(output);
+        newButton.setColorNormalResId(R.color.white);
+        newButton.setColorPressedResId(R.color.white_pressed);
+        newButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mAdapterItems.add(c);
+                mFloatingsMenu.collapse();
+                mFloatingsMenu.removeButton(newButton);
+                myAdapter.updateData(mAdapterItems);
+            }
+        });
 
+        mFloatingsMenu.addButton(newButton);
+    }
+
+    private void loadButtons() {
         for (final Category cat : SubscribeFragment.this.categories) {
-            final FloatingActionButton newButton = new FloatingActionButton(ma);
-            String catTitle = cat.getCategory();
-            String output = catTitle.substring(0, 1).toUpperCase() + catTitle.substring(1);
-            newButton.setTitle(output);
-            newButton.setColorNormalResId(R.color.white);
-            newButton.setColorPressedResId(R.color.white_pressed);
-            newButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mAdapterItems.add(cat);
-                    mFloatingsMenu.collapse();
-                    mFloatingsMenu.removeButton(newButton);
-                    myAdapter.updateData(mAdapterItems);
-                    myAdapter.notifyDataSetChanged();
-                }
-            });
-            mFloatingsMenu.addButton(newButton);
+            addButton(cat);
         }
+        progressView.setVisibility(View.GONE);
     }
 
 
@@ -183,14 +184,5 @@ public class SubscribeFragment extends CustomFragment implements View.OnClickLis
             instance = new SubscribeFragment();
         }
         return instance;
-    }
-
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case 0:
-                break;
-        }
     }
 }
