@@ -175,7 +175,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
         if (mLastLocation != null) {
             double latitude = mLastLocation.getLatitude();
             double longitude = mLastLocation.getLongitude();
-            Toast.makeText(context, "Your location: " + latitude + " ," + longitude, Toast.LENGTH_LONG).show();
+           // Toast.makeText(context, "Your location: " + latitude + " ," + longitude, Toast.LENGTH_LONG).show();
             return mLastLocation;
         } else {
             // no location available -> check phone settings
@@ -308,6 +308,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
     protected void onResume() {
         super.onResume();
         checkPlayServices();
+        getLocation();
     }
 
     /**
@@ -462,4 +463,8 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
             e.printStackTrace();
         }
     }
+
+
+
+
 }

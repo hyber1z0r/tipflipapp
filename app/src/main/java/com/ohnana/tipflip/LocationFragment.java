@@ -70,31 +70,26 @@ public class LocationFragment extends CustomFragment implements View.OnClickList
 
     @Override
     public void onMapReady(GoogleMap map) {
-//        LatLng sydney = new LatLng(-33.867, 151.206);
-//
-//        map.setMyLocationEnabled(true);
-//        map.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 13));
-//
-//        map.addMarker(new MarkerOptions()
-//                .title("Sydney")
-//                .snippet("The most populous city in Australia.")
-//                .position(sydney));
-
-
-
         if(location == null) {
             Toast.makeText(ma, "GPS not enabled", Toast.LENGTH_LONG).show();
         } else {
             map.setMyLocationEnabled(true);
             LatLng YOU = new LatLng(location.getLatitude(), location.getLongitude());
-            map.addMarker(new MarkerOptions().position(YOU).icon(BitmapDescriptorFactory.fromResource(R.drawable.yourarehere))
-                    .title("Du er her"));
 
+            map.addMarker(new MarkerOptions().position(YOU).icon(BitmapDescriptorFactory.fromResource(R.drawable.here))
+                    .title("HEYHEY!")
+                    .snippet("Du er her"));
+
+//            map.addMarker(new MarkerOptions().position(YOU)
+//                    .title("HEYHEY!")
+//                    .snippet("Du er her"));
             //Move the camera instantly to you with a zoom of 15.
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(YOU, 18));
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(YOU, 10));
             // Zoom in, animating the camera.
-            map.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
+            map.animateCamera(CameraUpdateFactory.zoomTo(16), 2000, null);
         }
     }
+
+
 
 }
