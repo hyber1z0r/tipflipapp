@@ -1,18 +1,22 @@
 package com.ohnana.tipflip;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
-public class HomeFragment extends CustomFragment implements View.OnClickListener {
+import java.util.ArrayList;
+import java.util.List;
+
+
+public class HomeFragment extends CustomFragment {
 
     private MainActivity ma;
     private static HomeFragment instance;
     public static String TAG = "HOMEFRAGMENT";
+    private RecyclerView mRecycleView;
 
     @Override
     protected boolean canGoBack() {
@@ -22,12 +26,20 @@ public class HomeFragment extends CustomFragment implements View.OnClickListener
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.home_view, container, false);
-        int[] clickButtons = new int[]{ R.id.buttonSendPost // buttons
-        };
-        for (int i : clickButtons) {
-            rootView.findViewById(i).setOnClickListener(this);
-        }
         ma = (MainActivity) getActivity();
+        mRecycleView = (RecyclerView) rootView.findViewById(R.id.home_recview);
+        LinearLayoutManager llm = new LinearLayoutManager(ma);
+        mRecycleView.setLayoutManager(llm);
+        List<Offer> offers = new ArrayList<>();
+        offers.add(new Offer("1", new Category("a", "parfume", "asd"), "20%"));
+        offers.add(new Offer("2", new Category("b", "food", "asd"), "10%"));
+        offers.add(new Offer("3", new Category("c", "men", "asd"), "5%"));
+        offers.add(new Offer("4", new Category("d", "tøj", "asd"), "25%"));
+        offers.add(new Offer("5", new Category("e", "pizza", "asd"), "40%"));
+        offers.add(new Offer("6", new Category("f", "sko", "asd"), "100%"));
+        offers.add(new Offer("7", new Category("g", "kosttilskud", "asd"), "90%"));
+        HomeRVAdapter mAdapter = new HomeRVAdapter(offers);
+        mRecycleView.setAdapter(mAdapter);
         return rootView;
     }
 
@@ -42,22 +54,4 @@ public class HomeFragment extends CustomFragment implements View.OnClickListener
         return instance;
     }
 
-
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.buttonSendPost: //if this button is clicked
-                // make that call to webserver
-                new AsyncTask<Void, Void, Void>() {
-                    @Override
-                    protected Void doInBackground(Void... params) {
-                        Log.i(TAG, "onClick do in Background");
-                        ma.sendRegistrationIdToBackend();
-                        return null;
-                    }
-                }.execute(null, null, null);
-                break;
-        }
-    }
 }

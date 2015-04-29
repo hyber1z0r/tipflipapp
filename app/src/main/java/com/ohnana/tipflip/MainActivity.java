@@ -250,6 +250,9 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
                 // homefragment because of failure -> should be login fragment in future
                 fragment = HomeFragment.getInstance();
                 break;
+            case 6:
+                // fall through to default!
+                sendRegistrationIdToBackend();
             default:
                 fragment = HomeFragment.getInstance();
         }
@@ -436,7 +439,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
      * to a server that echoes back the message using the 'from' address in the message.
      */
     // IS PUBLIC RIGHT NOW BECAUSE WE ARE TESTING
-    public void sendRegistrationIdToBackend() {
+    private void sendRegistrationIdToBackend() {
         HashMap<String, String> map = new HashMap<>();
         map.put("regid", regid);
         service.saveRegId(map, new Callback<JSONObject>() {

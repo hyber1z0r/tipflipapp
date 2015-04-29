@@ -5,22 +5,25 @@
     <string name="action_settings">Settings</string>
     <array name="drawer_titles">
         <item>
-            Hjem
+            Home
         </item>
         <item>
-            Din profil
+            Profile
         </item>
         <item>
-            Abonner
+            Subscribe
         </item>
         <item>
-            Se tilbud
+            Offers
         </item>
         <item>
-            Se lokation
+            Location
         </item>
         <item>
-            Log ud
+            Log out
+        </item>
+        <item>
+            Send regid @POST
         </item>
     </array>
     <string name="drawer_open">Open drawer</string>
