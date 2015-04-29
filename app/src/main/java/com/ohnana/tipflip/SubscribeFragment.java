@@ -1,5 +1,6 @@
 package com.ohnana.tipflip;
 
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -65,6 +66,7 @@ public class SubscribeFragment extends CustomFragment {
         mListView = (ListView) rootView.findViewById(R.id.listViewSubscribe);
         myAdapter = new CategoryListAdapter(ma, mAdapterItems);
         mListView.setAdapter(myAdapter);
+
         progressView = (CircularProgressView) rootView.findViewById(R.id.progress_view);
         progressView.setVisibility(View.VISIBLE);
 
@@ -116,6 +118,7 @@ public class SubscribeFragment extends CustomFragment {
                 SubscribeFragment.this.user = user;
                 if (mAdapterItems != null) {
                     mAdapterItems = SubscribeFragment.this.user.getCategories();
+                    progressView.setVisibility(View.GONE);
                     myAdapter.updateData(mAdapterItems);
                     getCategories();
                 } else {
@@ -214,7 +217,6 @@ public class SubscribeFragment extends CustomFragment {
         for (final Category cat : SubscribeFragment.this.categories) {
             addButton(cat);
         }
-        progressView.setVisibility(View.GONE);
     }
 
 

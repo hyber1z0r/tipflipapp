@@ -1,6 +1,5 @@
 package com.ohnana.tipflip;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -14,6 +13,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -112,6 +112,8 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
     }
 
     private void init() {
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM | ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_HOME_AS_UP);
+        getSupportActionBar().setIcon(R.drawable.ic_drawer);
         mTitle = mDrawerTitle = getTitle();
         mDrawerTitles = getResources().getStringArray(R.array.drawer_titles);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -143,9 +145,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
         // enable ActionBar app icon to behave as action to toggle nav drawer
-        getSupportActionBar().setIcon(R.drawable.ic_drawer);
-        getSupportActionBar().setDefaultDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
+
     }
 
     /**
