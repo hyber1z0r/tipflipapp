@@ -6,7 +6,6 @@
     android:background="@color/gray_background">
 
 
-    <!-- Make these two inside a relativ layout -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">

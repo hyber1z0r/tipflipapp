@@ -1,5 +1,6 @@
 package com.ohnana.tipflip;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -8,12 +9,12 @@ import android.content.res.Configuration;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v4.app.ActionBarDrawerToggle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,19 +28,17 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.protocol.HTTP;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.HashMap;
+
+import retrofit.Callback;
+import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 
 public class MainActivity extends ActionBarActivity implements GoogleApiClient.ConnectionCallbacks,
@@ -56,6 +55,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
     private GoogleCloudMessaging gcm;
     private Context context;
     private String regid;
+    private TipFlipService service;
 
     /**
      * Location attributes
@@ -64,16 +64,6 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
 
     // Google client to interact with Google API
     private GoogleApiClient mGoogleApiClient;
-
-    // boolean flag to toggle periodic location updates
-    private boolean mRequestingLocationUpdates = false;
-
-    private LocationRequest mLocationRequest;
-
-    // Location updates intervals in sec
-    private static int UPDATE_INTERVAL = 10000; // 10 sec
-    private static int FATEST_INTERVAL = 5000; // 5 sec
-    private static int DISPLACEMENT = 10; // 10 meters
 
     /**
      * Navigation drawer attributes
@@ -84,7 +74,6 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
     private CharSequence mTitle;
     private CharSequence mDrawerTitle;
     private ActionBarDrawerToggle mDrawerToggle;
-    public static android.support.v4.app.FragmentManager fragmentManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,9 +97,12 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
             selectItem(0); // the first: Home fragment
         }
 
+        RestAdapter restAdapter = new RestAdapter.Builder()
+                .setEndpoint("http://tipflip.herokuapp.com")
+                .setLogLevel(RestAdapter.LogLevel.BASIC)
+                .build();
+        service = restAdapter.create(TipFlipService.class);
         getLocation();
-        // initialising the object of the FragmentManager.
-        fragmentManager = getSupportFragmentManager();
     }
 
     @Override
@@ -166,7 +158,9 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
                 .addApi(LocationServices.API).build();
     }
 
-    public Location getLastLocation() { return mLastLocation; }
+    public Location getLastLocation() {
+        return mLastLocation;
+    }
 
     private Location getLocation() {
         connectToGooglePlay();
@@ -374,7 +368,6 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
     }
 
 
-
     /**
      * Registers the application with GCM servers asynchronously.
      * <p/>
@@ -443,23 +436,24 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
      */
     // IS PUBLIC RIGHT NOW BECAUSE WE ARE TESTING
     public void sendRegistrationIdToBackend() {
-        JSONObject obj = new JSONObject();
-        try {
-            obj.put("regid", regid);
-            DefaultHttpClient httpclient = new DefaultHttpClient();
-            HttpPost httppostreq = new HttpPost("http://tipflip.herokuapp.com/savereg");
-            StringEntity se = new StringEntity(obj.toString());
-            se.setContentType("application/json;charset=UTF-8");
-            se.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, "application/json;charset=UTF-8"));
-            httppostreq.setEntity(se);
-            HttpResponse httpresponse = httpclient.execute(httppostreq);
-            StatusLine statusLine = httpresponse.getStatusLine();
-            int status = statusLine.getStatusCode();
-            if (status != 200)
-                throw new Exception("Received status " + status + ": " + statusLine.getReasonPhrase());
-            Log.i(TAG, "Successfully registered reg id to Node js server");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        HashMap<String, String> map = new HashMap<>();
+        map.put("regid", regid);
+        service.saveRegId(map, new Callback<JSONObject>() {
+            @Override
+            public void success(JSONObject jsonObject, Response response) {
+                Log.i(TAG, "Successfully registered regid to node.js server");
+                Toast.makeText(MainActivity.this, "Success in registereing id", Toast.LENGTH_LONG).show();
+            }
+            @Override
+            public void failure(RetrofitError error) {
+                Log.e(TAG, "Error in contacting node.js server");
+                new android.support.v7.app.AlertDialog.Builder(MainActivity.this)
+                        .setTitle("Internet error")
+                        .setMessage("Was unable to register device. Contact app admin")
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton("OK", null)
+                        .create().show();
+            }
+        });
     }
 }
