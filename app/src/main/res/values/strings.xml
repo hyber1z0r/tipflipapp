@@ -4,27 +4,13 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <array name="drawer_titles">
-        <item>
-            Home
-        </item>
-        <item>
-            Profile
-        </item>
-        <item>
-            Subscribe
-        </item>
-        <item>
-            Offers
-        </item>
-        <item>
-            Location
-        </item>
-        <item>
-            Log out
-        </item>
-        <item>
-            Send regid @POST
-        </item>
+        <item>{fa-home}   Home</item>
+        <item>{fa-user}   Profile</item>
+        <item>{fa-plus-circle}   Subscribe</item>
+        <item>{fa-newspaper-o}   Offers</item>
+        <item>{fa-location-arrow}   Location</item>
+        <item>{fa-sign-out}   Log out</item>
+        <item>Send regid @POST</item>
     </array>
     <string name="drawer_open">Open drawer</string>
     <string name="drawer_close">Close drawer</string>
