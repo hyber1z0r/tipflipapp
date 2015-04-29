@@ -8,6 +8,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
+
 import java.util.List;
 
 /**
@@ -23,8 +26,7 @@ public class HomeRVAdapter extends RecyclerView.Adapter<HomeRVAdapter.OfferViewH
     @Override
     public OfferViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.home_cardview, parent, false);
-        OfferViewHolder pvh = new OfferViewHolder(v);
-        return pvh;
+        return new OfferViewHolder(v);
     }
 
     @Override
@@ -35,6 +37,9 @@ public class HomeRVAdapter extends RecyclerView.Adapter<HomeRVAdapter.OfferViewH
         holder.rabat.setText("Rabat " + o.getDiscount());
         holder.desc.setText("Der er " + o.getDiscount() + " på " + o.getCategory().getCategory() + " mellem kl. 12 og 14");
         holder.butikPhoto.setImageResource(R.drawable.matas_logo);
+        YoYo.with(Techniques.FadeIn)
+                .duration(1000)
+                .playOn(holder.cv);
     }
 
     @Override
