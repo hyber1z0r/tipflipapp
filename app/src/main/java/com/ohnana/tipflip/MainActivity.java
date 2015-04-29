@@ -33,7 +33,9 @@ import com.google.android.gms.location.LocationServices;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import retrofit.Callback;
 import retrofit.RestAdapter;
@@ -68,7 +70,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
     /**
      * Navigation drawer attributes
      */
-    private String[] mDrawerTitles;
+    private List<DrawerListItem> mDrawerTitles;
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private CharSequence mTitle;
@@ -115,16 +117,23 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM | ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_HOME_AS_UP);
         getSupportActionBar().setIcon(R.drawable.ic_drawer);
         mTitle = mDrawerTitle = getTitle();
-        mDrawerTitles = getResources().getStringArray(R.array.drawer_titles);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
-
         // set a custom shadow that overlays the main content when the drawer opens
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+        mDrawerTitles = new ArrayList<>();
+        mDrawerTitles.add(new DrawerListItem("{fa-home}", "Home"));
+        mDrawerTitles.add(new DrawerListItem("{fa-user}", "Profile"));
+        mDrawerTitles.add(new DrawerListItem("{fa-plus-circle}", "Subscribe"));
+        mDrawerTitles.add(new DrawerListItem("{fa-newspaper-o}", "Offers"));
+        mDrawerTitles.add(new DrawerListItem("{fa-location-arrow}", "Location"));
+        mDrawerTitles.add(new DrawerListItem("{fa-sign-out}", "Sign out"));
+        mDrawerTitles.add(new DrawerListItem("", "Send postrequest"));
+
+        DrawerListItemAdapter drawerAdapter = new DrawerListItemAdapter(this, mDrawerTitles);
 
         // set up the drawer's list view with items and click listener
-        mDrawerList.setAdapter(new ArrayAdapter<String>(this,
-                R.layout.drawer_list_item, mDrawerTitles));
+        mDrawerList.setAdapter(drawerAdapter);
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
         // ActionBarDrawerToggle ties together the the proper interactions
@@ -169,7 +178,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
         if (mLastLocation != null) {
             double latitude = mLastLocation.getLatitude();
             double longitude = mLastLocation.getLongitude();
-           // Toast.makeText(context, "Your location: " + latitude + " ," + longitude, Toast.LENGTH_LONG).show();
+            // Toast.makeText(context, "Your location: " + latitude + " ," + longitude, Toast.LENGTH_LONG).show();
             return mLastLocation;
         } else {
             // no location available -> check phone settings
@@ -263,7 +272,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
 
         // Highlight the selected item, update the title, and close the drawer
         mDrawerList.setItemChecked(position, true);
-        setTitle(mDrawerTitles[position]);
+        setTitle(mDrawerTitles.get(position).getTitle());
         mDrawerLayout.closeDrawer(mDrawerList);
     }
 
@@ -448,6 +457,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
                 Log.i(TAG, "Successfully registered regid to node.js server");
                 Toast.makeText(MainActivity.this, "Success in registereing id", Toast.LENGTH_LONG).show();
             }
+
             @Override
             public void failure(RetrofitError error) {
                 Log.e(TAG, "Error in contacting node.js server");
@@ -460,8 +470,4 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
             }
         });
     }
-
-
-
-
 }

@@ -58,14 +58,13 @@ public class CategoryListAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.listview_catitem, null);
         }
-
-        TextView title = (TextView) convertView.findViewById(R.id.list_item_text);
         // getting category data for the row
         Category c = categories.get(position);
 
         // title
         String catTitle = c.getCategory();
         String output = catTitle.substring(0, 1).toUpperCase() + catTitle.substring(1);
+        TextView title = (TextView) convertView.findViewById(R.id.list_item_text);
         title.setText(output);
 
         // image
