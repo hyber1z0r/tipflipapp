@@ -23,4 +23,7 @@ public interface TipFlipService {
 
     @POST("/savereg")
     void saveRegId(@Body HashMap<String, String> body, Callback<JSONObject> cb);
+
+    @GET("/offers")
+    void getAllOffers(Callback<List<Offer>> cb);
 }
