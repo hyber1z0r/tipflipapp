@@ -1,4 +1,4 @@
-package com.ohnana.tipflip;
+package com.ohnana.tipflip.model;
 
 import org.parceler.Parcel;
 import org.parceler.ParcelConstructor;

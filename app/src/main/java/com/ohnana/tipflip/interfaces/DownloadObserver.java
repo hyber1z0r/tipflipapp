@@ -1,4 +1,4 @@
-package com.ohnana.tipflip;
+package com.ohnana.tipflip.interfaces;
 
 /**
  * Created by jakobgaardandersen on 06/05/15.

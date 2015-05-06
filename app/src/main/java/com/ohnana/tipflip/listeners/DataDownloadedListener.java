@@ -1,4 +1,6 @@
-package com.ohnana.tipflip;
+package com.ohnana.tipflip.listeners;
+
+import com.ohnana.tipflip.interfaces.DownloadObserver;
 
 import java.util.ArrayList;
 import java.util.List;

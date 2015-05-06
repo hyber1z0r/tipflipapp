@@ -1,4 +1,4 @@
-package com.ohnana.tipflip;
+package com.ohnana.tipflip.fragments;
 
 import android.location.Location;
 import android.os.Bundle;
@@ -17,6 +17,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.ohnana.tipflip.MainActivity;
+import com.ohnana.tipflip.R;
 
 
 public class LocationFragment extends CustomFragment implements View.OnClickListener, OnMapReadyCallback {

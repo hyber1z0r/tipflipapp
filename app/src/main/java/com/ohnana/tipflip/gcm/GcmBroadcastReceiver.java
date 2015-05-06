@@ -1,4 +1,4 @@
-package com.ohnana.tipflip;
+package com.ohnana.tipflip.gcm;
 
 import android.app.Activity;
 import android.content.ComponentName;

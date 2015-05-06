@@ -1,4 +1,4 @@
-package com.ohnana.tipflip;
+package com.ohnana.tipflip.adapters;
 
 import android.app.Activity;
 import android.content.Context;
@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.IconTextView;
 import android.widget.TextView;
+
+import com.ohnana.tipflip.R;
 
 import java.util.List;
 

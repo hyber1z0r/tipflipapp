@@ -1,4 +1,4 @@
-package com.ohnana.tipflip;
+package com.ohnana.tipflip.fragments;
 
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -7,9 +7,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.ohnana.tipflip.adapters.HomeRVAdapter;
+import com.ohnana.tipflip.MainActivity;
+import com.ohnana.tipflip.model.Offer;
+import com.ohnana.tipflip.model.Profile;
+import com.ohnana.tipflip.R;
+
 import org.parceler.Parcels;
 
-import java.util.ArrayList;
 import java.util.List;
 
 

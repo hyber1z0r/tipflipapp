@@ -1,4 +1,4 @@
-package com.ohnana.tipflip;
+package com.ohnana.tipflip.fragments;
 
 
 import android.support.v4.app.Fragment;

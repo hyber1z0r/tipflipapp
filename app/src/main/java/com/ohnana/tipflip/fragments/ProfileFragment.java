@@ -1,11 +1,12 @@
-package com.ohnana.tipflip;
+package com.ohnana.tipflip.fragments;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.ohnana.tipflip.MainActivity;
+import com.ohnana.tipflip.R;
 
 public class ProfileFragment extends CustomFragment implements View.OnClickListener {
 

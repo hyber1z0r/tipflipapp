@@ -1,4 +1,4 @@
-package com.ohnana.tipflip;
+package com.ohnana.tipflip.gcm;
 
 import android.app.IntentService;
 import android.app.NotificationManager;
@@ -6,8 +6,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.media.MediaPlayer;
-import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -15,6 +13,8 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.ohnana.tipflip.MainActivity;
+import com.ohnana.tipflip.R;
 
 /**
  * Created by jakobgaardandersen on 21/04/15.

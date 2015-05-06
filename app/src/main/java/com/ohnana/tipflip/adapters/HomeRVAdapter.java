@@ -1,4 +1,4 @@
-package com.ohnana.tipflip;
+package com.ohnana.tipflip.adapters;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
+import com.ohnana.tipflip.model.Offer;
+import com.ohnana.tipflip.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

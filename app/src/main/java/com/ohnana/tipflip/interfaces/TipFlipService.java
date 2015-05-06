@@ -1,4 +1,8 @@
-package com.ohnana.tipflip;
+package com.ohnana.tipflip.interfaces;
+
+import com.ohnana.tipflip.model.Offer;
+import com.ohnana.tipflip.model.Profile;
+import com.ohnana.tipflip.model.Category;
 
 import org.json.JSONObject;
 

@@ -1,4 +1,4 @@
-package com.ohnana.tipflip;
+package com.ohnana.tipflip.fragments;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,12 +15,16 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.hudomju.swipe.SwipeToDismissTouchListener;
 import com.hudomju.swipe.adapter.ListViewAdapter;
+import com.ohnana.tipflip.adapters.CategoryListAdapter;
+import com.ohnana.tipflip.MainActivity;
+import com.ohnana.tipflip.model.Profile;
+import com.ohnana.tipflip.R;
+import com.ohnana.tipflip.model.Category;
 
 import org.parceler.Parcels;
 
@@ -128,7 +132,6 @@ public class SubscribeFragment extends CustomFragment {
                 myAdapter.add(c);
                 mFloatingsMenu.collapse();
                 mFloatingsMenu.removeButton(newButton);
-                Toast.makeText(ma, "SIZE OF MADAPTERITEMS:" + mAdapterItems.size(), Toast.LENGTH_LONG).show();
             }
         });
 

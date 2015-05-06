@@ -1,4 +1,4 @@
-package com.ohnana.tipflip;
+package com.ohnana.tipflip.fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -6,15 +6,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.ohnana.tipflip.MainActivity;
+import com.ohnana.tipflip.model.Offer;
+import com.ohnana.tipflip.adapters.OfferListAdapter;
+import com.ohnana.tipflip.R;
+import com.ohnana.tipflip.interfaces.TipFlipService;
+
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import retrofit.Callback;
-import retrofit.RestAdapter;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 public class OffersFragment extends CustomFragment implements View.OnClickListener {
 
