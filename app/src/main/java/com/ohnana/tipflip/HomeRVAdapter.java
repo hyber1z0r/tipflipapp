@@ -1,7 +1,10 @@
 package com.ohnana.tipflip;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +14,10 @@ import android.widget.TextView;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by jakobgaardandersen on 29/04/15.
@@ -32,11 +38,18 @@ public class HomeRVAdapter extends RecyclerView.Adapter<HomeRVAdapter.OfferViewH
     @Override
     public void onBindViewHolder(OfferViewHolder holder, int position) {
         Offer o = offers.get(position);
+
         holder.center.setText("Lyngby Storcenter");
         holder.butik.setText(o.getStore().getName());
         holder.rabat.setText("Rabat " + o.getDiscount());
-        holder.desc.setText("Der er " + o.getDiscount() + " på " + o.getCategory().getName() + " mellem kl. 12 og 14");
-        holder.butikPhoto.setImageResource(R.drawable.matas_logo);
+        holder.desc.setText("Der er " + o.getDiscount() + " på " + o.getOffer());
+        Date exp = o.getExpiration();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+        holder.expDate.setText(formatter.format(exp));
+        String base64Image = o.getStore().getImage();
+        byte[] image = Base64.decode(base64Image, Base64.DEFAULT);
+        Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
+        holder.butikPhoto.setImageBitmap(bitmap);
         YoYo.with(Techniques.FadeIn)
                 .duration(1000)
                 .playOn(holder.cv);
@@ -59,6 +72,7 @@ public class HomeRVAdapter extends RecyclerView.Adapter<HomeRVAdapter.OfferViewH
         TextView butik;
         TextView desc;
         ImageView butikPhoto;
+        TextView expDate;
 
         OfferViewHolder(View itemView) {
             super(itemView);
@@ -68,6 +82,7 @@ public class HomeRVAdapter extends RecyclerView.Adapter<HomeRVAdapter.OfferViewH
             rabat = (TextView) itemView.findViewById(R.id.cardview_rabat);
             butikPhoto = (ImageView) itemView.findViewById(R.id.cardview_image);
             desc = (TextView) itemView.findViewById(R.id.cardview_desc);
+            expDate = (TextView) itemView.findViewById(R.id.cardview_exp);
         }
     }
 }

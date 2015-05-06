@@ -8,12 +8,13 @@ import org.parceler.ParcelConstructor;
  */
 @Parcel
 public class Store {
-    String _id, name;
+    String _id, name, image;
 
     @ParcelConstructor
-    public Store(String _id, String name) {
+    public Store(String _id, String name, String image) {
         this._id = _id;
         this.name = name;
+        this.image = image;
     }
 
     public String getName() {
@@ -22,5 +23,9 @@ public class Store {
 
     public String get_id() {
         return _id;
+    }
+
+    public String getImage() {
+        return image;
     }
 }
