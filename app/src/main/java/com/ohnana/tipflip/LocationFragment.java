@@ -15,6 +15,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 
@@ -25,6 +26,7 @@ public class LocationFragment extends CustomFragment implements View.OnClickList
     private static LocationFragment instance;
     private static String TAG = "LocationFragment";
     private Location location;
+    private Marker myMarker;
 
     @Override
     protected boolean canGoBack() {
@@ -36,12 +38,13 @@ public class LocationFragment extends CustomFragment implements View.OnClickList
         View rootView = inflater.inflate(R.layout.location_view, container, false);
         ma = (MainActivity) getActivity();
 
-        SupportMapFragment mapFragment = (SupportMapFragment)getChildFragmentManager().findFragmentById(R.id.map);
+        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         if (mapFragment == null) {
             Log.i(TAG, "MAPFRAGMENT IS NULL");
         } else {
             location = ma.getLastLocation();
             mapFragment.getMapAsync(this);
+
         }
         return rootView;
     }
@@ -69,15 +72,17 @@ public class LocationFragment extends CustomFragment implements View.OnClickList
 
     @Override
     public void onMapReady(GoogleMap map) {
-        if(location == null) {
+        if (location == null) {
             Toast.makeText(ma, "GPS not enabled", Toast.LENGTH_LONG).show();
         } else {
             map.setMyLocationEnabled(true);
             LatLng YOU = new LatLng(location.getLatitude(), location.getLongitude());
 
-            map.addMarker(new MarkerOptions().position(YOU).icon(BitmapDescriptorFactory.fromResource(R.drawable.here))
+          myMarker = map.addMarker(new MarkerOptions().position(YOU).icon(BitmapDescriptorFactory.fromResource(R.drawable.here))
                     .title("HEYHEY!")
-                    .snippet("Du er her"));
+                    .snippet("Du er her")
+                    .position(
+                            new LatLng(location.getLatitude(), location.getLongitude())));
 
 //            map.addMarker(new MarkerOptions().position(YOU)
 //                    .title("HEYHEY!")
@@ -86,7 +91,12 @@ public class LocationFragment extends CustomFragment implements View.OnClickList
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(YOU, 10));
             // Zoom in, animating the camera.
             map.animateCamera(CameraUpdateFactory.zoomTo(16), 2000, null);
+            map.getUiSettings().setMyLocationButtonEnabled(true);
+
         }
     }
+
+
+
 
 }

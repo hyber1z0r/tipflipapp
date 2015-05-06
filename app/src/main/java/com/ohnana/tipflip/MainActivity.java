@@ -317,6 +317,13 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
         getLocation();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        checkPlayServices();
+        getLocation();
+    }
+
     /**
      * Check the device to make sure it has the Google Play Services APK. If
      * it doesn't, display a dialog that allows users to download the APK from
