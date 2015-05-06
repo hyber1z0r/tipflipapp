@@ -43,17 +43,20 @@ public class CategoryListAdapter extends BaseAdapter {
         return position;
     }
 
-    public void updateData(List<Category> categories) {
-        this.categories.clear();
-        this.categories.addAll(categories);
+
+    public void remove(int position){
+        this.categories.remove(position);
         this.notifyDataSetChanged();
     }
 
+    public void add(Category c){
+        this.categories.add(c);
+        this.notifyDataSetChanged();
+    }
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (inflater == null) {
-            inflater = (LayoutInflater) activity
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.listview_catitem, null);

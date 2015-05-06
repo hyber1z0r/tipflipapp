@@ -97,9 +97,6 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
         loadProfile();
         loadOffers();
         loadCategories();
-//        if (savedInstanceState == null) {
-//            selectItem(0); // the first: Home fragment
-//        }
     }
 
     private void init() {
@@ -317,44 +314,37 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
     private void selectItem(int position) {
         // Create a new fragment
         Fragment fragment;
-        Bundle bundle;
+        Bundle bundle = new Bundle();
         switch (position) {
             case 0:
                 fragment = HomeFragment.getInstance();
-                bundle = new Bundle();
                 bundle.putParcelable("profile", Parcels.wrap(profile));
                 break;
             case 1:
                 fragment = ProfileFragment.getInstance();
-                bundle = new Bundle();
                 break;
             case 2:
                 fragment = SubscribeFragment.getInstance();
-                bundle = new Bundle();
                 bundle.putParcelable("profile", Parcels.wrap(profile));
                 bundle.putParcelable("categories", Parcels.wrap(categories));
                 break;
             case 3:
                 fragment = OffersFragment.getInstance();
-                bundle = new Bundle();
                 bundle.putParcelable("offers", Parcels.wrap(offers));
                 break;
             case 4:
                 fragment = LocationFragment.getInstance();
-                bundle = new Bundle();
                 break;
             case 5:
                 // log out!
                 // homefragment because of failure -> should be login fragment in future
                 fragment = HomeFragment.getInstance();
-                bundle = new Bundle();
                 break;
             case 6:
                 // fall through to default!
                 sendRegistrationIdToBackend();
             default:
                 fragment = HomeFragment.getInstance();
-                bundle = new Bundle();
         }
         fragment.setArguments(bundle);
         // Insert the fragment by replacing any existing fragment
@@ -526,6 +516,13 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
         return super.onOptionsItemSelected(item);
     }
 

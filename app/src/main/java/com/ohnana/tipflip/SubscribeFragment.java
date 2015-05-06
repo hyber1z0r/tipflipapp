@@ -8,7 +8,6 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,19 +19,12 @@ import android.widget.Toast;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
-import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import com.hudomju.swipe.SwipeToDismissTouchListener;
 import com.hudomju.swipe.adapter.ListViewAdapter;
 
 import org.parceler.Parcels;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import retrofit.Callback;
-import retrofit.RestAdapter;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 public class SubscribeFragment extends CustomFragment {
 
@@ -40,16 +32,19 @@ public class SubscribeFragment extends CustomFragment {
     private static SubscribeFragment instance;
     public static String TAG = "SUBSCRIBEFRAGMENT";
     private Profile profile;
-    private List<Category> categories;
-    private ListView mListView;
+    private List<Category> categories; // holds the categories in the button menu
     private FloatingActionsMenu mFloatingsMenu;
-    private List<Category> mAdapterItems = new ArrayList<>();
+    private List<Category> mAdapterItems;
     private CategoryListAdapter myAdapter;
-    private CircularProgressView progressView;
 
-    @Override
-    protected boolean canGoBack() {
-        return false;
+    public SubscribeFragment() {
+    }
+
+    public static SubscribeFragment getInstance() {
+        if (instance == null) {
+            instance = new SubscribeFragment();
+        }
+        return instance;
     }
 
     @Override
@@ -61,12 +56,12 @@ public class SubscribeFragment extends CustomFragment {
     }
 
     private void init(View rootView) {
-        mListView = (ListView) rootView.findViewById(R.id.listViewSubscribe);
+        this.profile = Parcels.unwrap(getArguments().getParcelable("profile"));
+        this.categories = Parcels.unwrap(getArguments().getParcelable("categories"));
+        mAdapterItems = this.profile.getCategories();
+        final ListView mListView = (ListView) rootView.findViewById(R.id.listViewSubscribe);
         myAdapter = new CategoryListAdapter(ma, mAdapterItems);
         mListView.setAdapter(myAdapter);
-
-        progressView = (CircularProgressView) rootView.findViewById(R.id.progress_view);
-        progressView.setVisibility(View.VISIBLE);
 
         final SwipeToDismissTouchListener<ListViewAdapter> touchListener = new SwipeToDismissTouchListener<>(
                 new ListViewAdapter(mListView),
@@ -81,8 +76,7 @@ public class SubscribeFragment extends CustomFragment {
                         Category temp = (Category) myAdapter.getItem(i);
                         categories.add(temp);
                         addButton(temp);
-                        mAdapterItems.remove(i);
-                        myAdapter.updateData(mAdapterItems);
+                        myAdapter.remove(i);
                     }
                 });
         mListView.setOnTouchListener(touchListener);
@@ -93,29 +87,27 @@ public class SubscribeFragment extends CustomFragment {
                 if (touchListener.existPendingDismisses()) {
                     touchListener.undoPendingDismiss();
                 } else {
-                    //Toast.makeText(ListViewActivity.this, "Position " + position, LENGTH_SHORT).show();
                 }
             }
         });
 
         mFloatingsMenu = (FloatingActionsMenu) rootView.findViewById(R.id.multiple_actions);
-        this.profile = Parcels.unwrap(getArguments().getParcelable("profile"));
-        this.categories = Parcels.unwrap(getArguments().getParcelable("categories"));
-        mAdapterItems = this.profile.getCategories();
-        myAdapter.updateData(mAdapterItems);
+
+        // Only add those that the users doesn't subscribe to, to the button menu.
+        for (Category cat : mAdapterItems) {
+            for (int i = 0; i < this.categories.size(); i++) {
+                if (cat.getName().equals(this.categories.get(i).getName())) {
+                    this.categories.remove(i);
+                }
+            }
+        }
         loadButtons();
-        progressView.setVisibility(View.GONE);
     }
 
 
-    private void showInternetAlert() {
-        new AlertDialog.Builder(ma)
-                .setTitle("Internet error")
-                .setMessage("No internet connection was found. Try again.")
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setPositiveButton("OK", null)
-                .create().show();
-        progressView.setVisibility(View.GONE);
+    @Override
+    protected boolean canGoBack() {
+        return true;
     }
 
     private void addButton(final Category c) {
@@ -133,10 +125,10 @@ public class SubscribeFragment extends CustomFragment {
         newButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mAdapterItems.add(c);
+                myAdapter.add(c);
                 mFloatingsMenu.collapse();
                 mFloatingsMenu.removeButton(newButton);
-                myAdapter.updateData(mAdapterItems);
+                Toast.makeText(ma, "SIZE OF MADAPTERITEMS:" + mAdapterItems.size(), Toast.LENGTH_LONG).show();
             }
         });
 
@@ -166,19 +158,8 @@ public class SubscribeFragment extends CustomFragment {
     }
 
     private void loadButtons() {
-        for (final Category cat : SubscribeFragment.this.categories) {
+        for (Category cat : this.categories) {
             addButton(cat);
         }
-    }
-
-
-    public SubscribeFragment() {
-    }
-
-    public static SubscribeFragment getInstance() {
-        if (instance == null) {
-            instance = new SubscribeFragment();
-        }
-        return instance;
     }
 }
