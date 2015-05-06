@@ -1,16 +1,21 @@
 package com.ohnana.tipflip;
 
+import org.parceler.Parcel;
+import org.parceler.ParcelConstructor;
+
 import java.util.List;
 
 /**
  * Created by jakobgaardandersen on 24/04/15.
  */
-public class User {
-    private String name, _id, regID;
-    private List<String> offers;
-    private List<Category> categories;
+@Parcel
+public class Profile {
+    String name, _id, regID;
+    List<Offer> offers;
+    List<Category> categories;
 
-    public User(String _id, String name, String regID, List<String> offers, List<Category> categories) {
+    @ParcelConstructor
+    public Profile(String _id, String name, String regID, List<Offer> offers, List<Category> categories) {
         this._id = _id;
         this.name = name;
         this.regID = regID;
@@ -22,7 +27,7 @@ public class User {
         return categories;
     }
 
-    public List<String> getOffers() {
+    public List<Offer> getOffers() {
         return offers;
     }
 

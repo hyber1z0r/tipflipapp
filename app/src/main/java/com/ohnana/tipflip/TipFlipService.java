@@ -16,7 +16,7 @@ import retrofit.http.Query;
  */
 public interface TipFlipService {
     @GET("/profile")
-    void getProfile(@Query("name") String name, Callback<User> cb);
+    void getProfile(@Query("regid") String regID, Callback<Profile> cb);
 
     @GET("/categories")
     void getCategories(Callback<List<Category>> cb);

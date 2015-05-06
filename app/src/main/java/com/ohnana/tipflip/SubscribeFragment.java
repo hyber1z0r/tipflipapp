@@ -1,6 +1,5 @@
 package com.ohnana.tipflip;
 
-import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -16,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -25,6 +23,8 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import com.hudomju.swipe.SwipeToDismissTouchListener;
 import com.hudomju.swipe.adapter.ListViewAdapter;
+
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,8 +39,7 @@ public class SubscribeFragment extends CustomFragment {
     private MainActivity ma;
     private static SubscribeFragment instance;
     public static String TAG = "SUBSCRIBEFRAGMENT";
-    private TipFlipService service;
-    private User user;
+    private Profile profile;
     private List<Category> categories;
     private ListView mListView;
     private FloatingActionsMenu mFloatingsMenu;
@@ -58,7 +57,6 @@ public class SubscribeFragment extends CustomFragment {
         View rootView = inflater.inflate(R.layout.subscribe_view, container, false);
         ma = (MainActivity) getActivity();
         init(rootView);
-        loadProfile();
         return rootView;
     }
 
@@ -101,37 +99,14 @@ public class SubscribeFragment extends CustomFragment {
         });
 
         mFloatingsMenu = (FloatingActionsMenu) rootView.findViewById(R.id.multiple_actions);
-
-        // at bottom
-        RestAdapter restAdapter = new RestAdapter.Builder()
-                .setEndpoint("http://tipflip.herokuapp.com")
-                .setLogLevel(RestAdapter.LogLevel.BASIC)
-                .build();
-        service = restAdapter.create(TipFlipService.class);
+        this.profile = Parcels.unwrap(getArguments().getParcelable("profile"));
+        this.categories = Parcels.unwrap(getArguments().getParcelable("categories"));
+        mAdapterItems = this.profile.getCategories();
+        myAdapter.updateData(mAdapterItems);
+        loadButtons();
+        progressView.setVisibility(View.GONE);
     }
 
-    private void loadProfile() {
-        progressView.startAnimation();
-        service.getProfile("Jakob", new Callback<User>() {
-            @Override
-            public void success(User user, Response response) {
-                SubscribeFragment.this.user = user;
-                if (mAdapterItems != null) {
-                    mAdapterItems = SubscribeFragment.this.user.getCategories();
-                    progressView.setVisibility(View.GONE);
-                    myAdapter.updateData(mAdapterItems);
-                    getCategories();
-                } else {
-                    Toast.makeText(ma, "ADAPTERITEMS IS NULL", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                showInternetAlert();
-            }
-        });
-    }
 
     private void showInternetAlert() {
         new AlertDialog.Builder(ma)
@@ -143,32 +118,9 @@ public class SubscribeFragment extends CustomFragment {
         progressView.setVisibility(View.GONE);
     }
 
-    private void getCategories() {
-        service.getCategories(new Callback<List<Category>>() {
-            @Override
-            public void success(List<Category> categories, Response response) {
-                SubscribeFragment.this.categories = categories;
-
-                for (Category cat : mAdapterItems) {
-                    for (int i = 0; i < SubscribeFragment.this.categories.size(); i++) {
-                        if (cat.getCategory().equals(SubscribeFragment.this.categories.get(i).getCategory())) {
-                            SubscribeFragment.this.categories.remove(i);
-                        }
-                    }
-                }
-                loadButtons();
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                showInternetAlert();
-            }
-        });
-    }
-
     private void addButton(final Category c) {
         final FloatingActionButton newButton = new FloatingActionButton(ma);
-        String catTitle = c.getCategory();
+        String catTitle = c.getName();
         String output = catTitle.substring(0, 1).toUpperCase() + catTitle.substring(1);
         String base64Image = c.getImage();
         byte[] image = Base64.decode(base64Image, Base64.DEFAULT);

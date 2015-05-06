@@ -6,6 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import org.parceler.Parcels;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,32 +52,9 @@ public class OffersFragment extends CustomFragment implements View.OnClickListen
         myAdapter = new OfferListAdapter(ma, mAdapterItems);
         mListView.setAdapter(myAdapter);
 
-
-        // at bottom
-        RestAdapter restAdapter = new RestAdapter.Builder()
-                .setEndpoint("http://tipflip.herokuapp.com")
-                .setLogLevel(RestAdapter.LogLevel.BASIC)
-                .build();
-        service = restAdapter.create(TipFlipService.class);
-        getOffers();
+        mAdapterItems = Parcels.unwrap(getArguments().getParcelable("offers"));
+        myAdapter.updateData(mAdapterItems);
     }
-
-    private void getOffers() {
-        service.getAllOffers(new Callback<List<Offer>>() {
-            @Override
-            public void success(List<Offer> offers, Response response) {
-                mAdapterItems = offers;
-                myAdapter.updateData(mAdapterItems);
-
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-
-            }
-        });
-    }
-
 
     public OffersFragment() {
     }

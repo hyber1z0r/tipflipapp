@@ -1,15 +1,19 @@
 package com.ohnana.tipflip;
 
+import org.parceler.Parcel;
+import org.parceler.ParcelConstructor;
 /**
  * Created by jakobgaardandersen on 25/04/15.
  */
+@Parcel
 public class Category {
 
-    private String _id, category, image;
+    String _id, name, image;
 
-    public Category(String _id, String category, String image) {
+    @ParcelConstructor
+    public Category(String _id, String name, String image) {
         this._id = _id;
-        this.category = category;
+        this.name = name;
         this.image = image;
     }
 
@@ -17,8 +21,8 @@ public class Category {
         return _id;
     }
 
-    public String getCategory() {
-        return category;
+    public String getName() {
+        return name;
     }
 
     public String getImage() {

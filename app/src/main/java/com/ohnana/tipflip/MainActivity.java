@@ -20,7 +20,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -29,8 +28,11 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.location.LocationServices;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import org.json.JSONObject;
+import org.parceler.Parcels;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -41,10 +43,11 @@ import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+import retrofit.converter.GsonConverter;
 
 
 public class MainActivity extends ActionBarActivity implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener {
+        GoogleApiClient.OnConnectionFailedListener, DownloadObserver {
 
     /**
      * Google Cloud Messaging attributes
@@ -77,43 +80,32 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
     private CharSequence mDrawerTitle;
     private ActionBarDrawerToggle mDrawerToggle;
 
+    /**
+     * Our attributes
+     */
+    private Profile profile;
+    private List<Offer> offers;
+    private List<Category> categories;
+    private DataDownloadedListener downloadListener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = getApplicationContext();
         init();
-        // Check device for Play Services APK. If check succeeds, proceed with GCM registration.
-        if (checkPlayServices()) {
-            gcm = GoogleCloudMessaging.getInstance(this);
-            regid = getRegistrationId(context);
-            Log.i(TAG, regid);
-            if (regid.isEmpty()) {
-                registerInBackground();
-            }
-            buildGoogleApiClient();
-        } else {
-            Log.i(TAG, "No valid Google Play Services APK found.");
-        }
-        if (savedInstanceState == null) {
-            selectItem(0); // the first: Home fragment
-        }
-
-        RestAdapter restAdapter = new RestAdapter.Builder()
-                .setEndpoint("http://tipflip.herokuapp.com")
-                .setLogLevel(RestAdapter.LogLevel.BASIC)
-                .build();
-        service = restAdapter.create(TipFlipService.class);
-        getLocation();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        //connectToGooglePlay();
+        loadProfile();
+        loadOffers();
+        loadCategories();
+//        if (savedInstanceState == null) {
+//            selectItem(0); // the first: Home fragment
+//        }
     }
 
     private void init() {
+        /**
+         * The navigation drawer setup
+         * */
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM | ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_HOME_AS_UP);
         getSupportActionBar().setIcon(R.drawable.ic_drawer);
         mTitle = mDrawerTitle = getTitle();
@@ -153,8 +145,90 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
-        // enable ActionBar app icon to behave as action to toggle nav drawer
 
+        /**
+         * The Google Play Services and location setup
+         * */
+        // Check device for Play Services APK. If check succeeds, proceed with GCM registration.
+        if (checkPlayServices()) {
+            gcm = GoogleCloudMessaging.getInstance(this);
+            regid = getRegistrationId(context);
+            Log.i(TAG, regid);
+            if (regid.isEmpty()) {
+                registerInBackground();
+            }
+            buildGoogleApiClient();
+        } else {
+            Log.i(TAG, "No valid Google Play Services APK found.");
+        }
+
+        /**
+         * The REST Adapter setup, for making http calls to our Node.js server
+         * */
+        Gson gson = new GsonBuilder()
+                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                .create();
+        RestAdapter restAdapter = new RestAdapter.Builder()
+                .setEndpoint("http://tipflip.herokuapp.com")
+                .setLogLevel(RestAdapter.LogLevel.BASIC)
+                .setConverter(new GsonConverter(gson))
+                .build();
+        service = restAdapter.create(TipFlipService.class);
+        getLocation();
+
+        downloadListener = new DataDownloadedListener();
+        downloadListener.registerObserver(this);
+    }
+
+    private void loadProfile() {
+        service.getProfile(getRegistrationId(this), new Callback<Profile>() {
+            @Override
+            public void success(Profile profile, Response response) {
+                MainActivity.this.profile = profile;
+                downloadListener.done();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                showError("profile", error);
+            }
+        });
+    }
+
+    private void loadOffers() {
+        service.getAllOffers(new Callback<List<Offer>>() {
+            @Override
+            public void success(List<Offer> offers, Response response) {
+                MainActivity.this.offers = offers;
+                downloadListener.done();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                showError("offers", error);
+            }
+        });
+    }
+
+    private void loadCategories() {
+        service.getCategories(new Callback<List<Category>>() {
+            @Override
+            public void success(List<Category> categories, Response response) {
+                MainActivity.this.categories = categories;
+                downloadListener.done();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                showError("categories", error);
+            }
+        });
+    }
+
+
+    private void showError(String type, RetrofitError error) {
+        Toast.makeText(this, "Error in getting " + type + ": " + error.getMessage(), Toast.LENGTH_LONG).show();
+        Log.i(TAG, error.getMessage());
     }
 
     /**
@@ -224,6 +298,11 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
+    @Override
+    public void update() {
+        selectItem(0); // the first: Home fragment
+    }
+
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
@@ -238,33 +317,46 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
     private void selectItem(int position) {
         // Create a new fragment
         Fragment fragment;
+        Bundle bundle;
         switch (position) {
             case 0:
                 fragment = HomeFragment.getInstance();
+                bundle = new Bundle();
+                bundle.putParcelable("profile", Parcels.wrap(profile));
                 break;
             case 1:
                 fragment = ProfileFragment.getInstance();
+                bundle = new Bundle();
                 break;
             case 2:
                 fragment = SubscribeFragment.getInstance();
+                bundle = new Bundle();
+                bundle.putParcelable("profile", Parcels.wrap(profile));
+                bundle.putParcelable("categories", Parcels.wrap(categories));
                 break;
             case 3:
                 fragment = OffersFragment.getInstance();
+                bundle = new Bundle();
+                bundle.putParcelable("offers", Parcels.wrap(offers));
                 break;
             case 4:
                 fragment = LocationFragment.getInstance();
+                bundle = new Bundle();
                 break;
             case 5:
                 // log out!
                 // homefragment because of failure -> should be login fragment in future
                 fragment = HomeFragment.getInstance();
+                bundle = new Bundle();
                 break;
             case 6:
                 // fall through to default!
                 sendRegistrationIdToBackend();
             default:
                 fragment = HomeFragment.getInstance();
+                bundle = new Bundle();
         }
+        fragment.setArguments(bundle);
         // Insert the fragment by replacing any existing fragment
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.content_frame, fragment);
@@ -276,53 +368,6 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
         mDrawerLayout.closeDrawer(mDrawerList);
     }
 
-    public void pushFragment(CustomFragment fragment) {
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.content_frame, fragment);
-        ft.commit();
-    }
-
-    @Override
-    public void setTitle(CharSequence title) {
-        mTitle = title;
-        getSupportActionBar().setTitle(mTitle);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        checkPlayServices();
-        getLocation();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        checkPlayServices();
-        getLocation();
-    }
 
     /**
      * Check the device to make sure it has the Google Play Services APK. If
@@ -411,9 +456,6 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
                     storeRegistrationId(context, regid);
                 } catch (IOException ex) {
                     msg = "Error :" + ex.getMessage();
-                    // If there is an error, don't just keep trying to register.
-                    // Require the user to click a button again, or perform
-                    // exponential back-off.
                 }
                 return msg;
             }
@@ -443,18 +485,10 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
      * @return Application's {@code SharedPreferences}.
      */
     private SharedPreferences getGcmPreferences(Context context) {
-        // This sample app persists the registration ID in shared preferences, but
-        // how you store the regID in your app is up to you.
         return getSharedPreferences(MainActivity.class.getSimpleName(),
                 Context.MODE_PRIVATE);
     }
 
-    /**
-     * Sends the registration ID to your server over HTTP, so it can use GCM/HTTP or CCS to send
-     * messages to your app. Not needed for this demo since the device sends upstream messages
-     * to a server that echoes back the message using the 'from' address in the message.
-     */
-    // IS PUBLIC RIGHT NOW BECAUSE WE ARE TESTING
     private void sendRegistrationIdToBackend() {
         HashMap<String, String> map = new HashMap<>();
         map.put("regid", regid);
@@ -476,5 +510,36 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
                         .create().show();
             }
         });
+    }
+
+    @Override
+    public void setTitle(CharSequence title) {
+        mTitle = title;
+        getSupportActionBar().setTitle(mTitle);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkPlayServices();
+        getLocation();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        checkPlayServices();
+        getLocation();
     }
 }

@@ -62,7 +62,7 @@ public class CategoryListAdapter extends BaseAdapter {
         Category c = categories.get(position);
 
         // title
-        String catTitle = c.getCategory();
+        String catTitle = c.getName();
         String output = catTitle.substring(0, 1).toUpperCase() + catTitle.substring(1);
         TextView title = (TextView) convertView.findViewById(R.id.list_item_text);
         title.setText(output);

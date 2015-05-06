@@ -62,7 +62,7 @@ public class OfferListAdapter extends BaseAdapter {
         Offer o = offers.get(position);
 
         // Setting category
-        title.setText(o.getCategory().getCategory());
+        title.setText(o.getCategory().getName());
 
         TextView discount = (TextView) convertView.findViewById(R.id.listoffer_disc);
         discount.setText(o.getDiscount());

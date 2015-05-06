@@ -33,9 +33,9 @@ public class HomeRVAdapter extends RecyclerView.Adapter<HomeRVAdapter.OfferViewH
     public void onBindViewHolder(OfferViewHolder holder, int position) {
         Offer o = offers.get(position);
         holder.center.setText("Lyngby Storcenter");
-        holder.butik.setText("Matas");
+        holder.butik.setText(o.getStore().getName());
         holder.rabat.setText("Rabat " + o.getDiscount());
-        holder.desc.setText("Der er " + o.getDiscount() + " på " + o.getCategory().getCategory() + " mellem kl. 12 og 14");
+        holder.desc.setText("Der er " + o.getDiscount() + " på " + o.getCategory().getName() + " mellem kl. 12 og 14");
         holder.butikPhoto.setImageResource(R.drawable.matas_logo);
         YoYo.with(Techniques.FadeIn)
                 .duration(1000)
