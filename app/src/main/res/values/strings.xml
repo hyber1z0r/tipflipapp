@@ -16,4 +16,5 @@
     <string name="drawer_close">Close drawer</string>
     <string name="deleted">Slettet</string>
     <string name="undo">FORTRYD</string>
+    <string name="title_activity_offer_detail">OfferDetailActivity</string>
 </resources>

@@ -1,14 +1,17 @@
 package com.ohnana.tipflip.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.ohnana.tipflip.MainActivity;
 import com.ohnana.tipflip.adapters.HomeRVAdapter;
+import com.ohnana.tipflip.listeners.RecyclerItemClickListener;
 import com.ohnana.tipflip.model.Offer;
 import com.ohnana.tipflip.R;
 import com.ohnana.tipflip.interfaces.TipFlipService;
@@ -27,6 +30,7 @@ public class OffersFragment extends CustomFragment implements View.OnClickListen
     private RecyclerView mRecycleView;
 
 
+
     @Override
     protected boolean canGoBack() {
         return false;
@@ -42,6 +46,17 @@ public class OffersFragment extends CustomFragment implements View.OnClickListen
         this.offers = Parcels.unwrap(getArguments().getParcelable("offers"));
         HomeRVAdapter mAdapter = new HomeRVAdapter(offers);
         mRecycleView.setAdapter(mAdapter);
+        mRecycleView.addOnItemTouchListener(
+                new RecyclerItemClickListener(ma, new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override public void onItemClick(View view, int position) {
+                        Intent i = new Intent(ma, OfferDetailActivity.class);
+                        i.putExtra("Offer", Parcels.wrap(offers.get(position)));
+                        startActivity(i);
+
+
+                    }
+                })
+        );
         return rootView;
     }
 
