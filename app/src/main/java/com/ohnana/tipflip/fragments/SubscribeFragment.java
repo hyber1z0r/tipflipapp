@@ -122,7 +122,7 @@ public class SubscribeFragment extends CustomFragment {
         byte[] image = Base64.decode(base64Image, Base64.DEFAULT);
         Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
 
-        newButton.setImageBitmap(getCroppedBitmap(bitmap));
+        newButton.setImageBitmap(Bitmap.createScaledBitmap(bitmap, 112, 122, false));
         newButton.setTitle(output);
         newButton.setColorNormalResId(R.color.white);
         newButton.setColorPressedResId(R.color.white_pressed);

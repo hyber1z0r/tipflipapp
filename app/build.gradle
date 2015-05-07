@@ -44,4 +44,5 @@ dependencies {
     compile 'com.joanzapata.android:android-iconify:1.0.9'
     compile 'org.parceler:parceler-api:0.2.14'
     provided 'org.parceler:parceler:0.2.14'
+    compile 'com.balysv.materialmenu:material-menu-toolbar:1.5.1'
 }
