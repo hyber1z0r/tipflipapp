@@ -1,12 +1,15 @@
 package com.ohnana.tipflip.fragments;
 
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.ohnana.tipflip.MainActivity;
+import com.ohnana.tipflip.adapters.HomeRVAdapter;
 import com.ohnana.tipflip.model.Offer;
 import com.ohnana.tipflip.adapters.OfferListAdapter;
 import com.ohnana.tipflip.R;
@@ -27,6 +30,7 @@ public class OffersFragment extends CustomFragment implements View.OnClickListen
     private ListView mListView;
     private List<Offer> mAdapterItems = new ArrayList<>();
     private OfferListAdapter myAdapter;
+    private RecyclerView mRecycleView;
 
 
     @Override
@@ -37,24 +41,14 @@ public class OffersFragment extends CustomFragment implements View.OnClickListen
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.offers_view, container, false);
-        int[] clickButtons = new int[]{ // buttons
-        };
-        for (int i : clickButtons) {
-            rootView.findViewById(i).setOnClickListener(this);
-        }
         ma = (MainActivity) getActivity();
-        init(rootView);
+        mRecycleView = (RecyclerView) rootView.findViewById(R.id.offer_recview);
+        LinearLayoutManager llm = new LinearLayoutManager(ma);
+        mRecycleView.setLayoutManager(llm);
+        this.offers = Parcels.unwrap(getArguments().getParcelable("offers"));
+        HomeRVAdapter mAdapter = new HomeRVAdapter(offers);
+        mRecycleView.setAdapter(mAdapter);
         return rootView;
-    }
-
-    private void init(View rootView)
-    {
-        mListView = (ListView) rootView.findViewById(R.id.listViewOffer);
-        myAdapter = new OfferListAdapter(ma, mAdapterItems);
-        mListView.setAdapter(myAdapter);
-
-        mAdapterItems = Parcels.unwrap(getArguments().getParcelable("offers"));
-        myAdapter.updateData(mAdapterItems);
     }
 
     public OffersFragment() {
@@ -66,8 +60,6 @@ public class OffersFragment extends CustomFragment implements View.OnClickListen
         }
         return instance;
     }
-
-
 
     @Override
     public void onClick(View v) {
