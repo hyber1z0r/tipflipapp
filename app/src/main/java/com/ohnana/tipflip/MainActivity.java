@@ -100,6 +100,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
     private List<Offer> offers;
     private List<Category> categories;
     private DataDownloadedListener downloadListener;
+    private int selectedFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -188,6 +189,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
 
         downloadListener = new DataDownloadedListener();
         downloadListener.registerObserver(this);
+        selectedFragment = -1;
     }
 
     private void loadProfile() {
@@ -359,11 +361,14 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
             default:
                 fragment = HomeFragment.getInstance();
         }
-        fragment.setArguments(bundle);
-        // Insert the fragment by replacing any existing fragment
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.content_frame, fragment);
-        ft.commit();
+        if(selectedFragment != position) {
+            fragment.setArguments(bundle);
+            // Insert the fragment by replacing any existing fragment
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.content_frame, fragment);
+            ft.commit();
+        }
+        selectedFragment = position;
 
         // Highlight the selected item, update the title, and close the drawer
         mDrawerList.setItemChecked(position, true);
