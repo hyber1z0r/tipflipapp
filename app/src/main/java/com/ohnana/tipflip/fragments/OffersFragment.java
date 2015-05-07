@@ -6,18 +6,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 
 import com.ohnana.tipflip.MainActivity;
 import com.ohnana.tipflip.adapters.HomeRVAdapter;
 import com.ohnana.tipflip.model.Offer;
-import com.ohnana.tipflip.adapters.OfferListAdapter;
 import com.ohnana.tipflip.R;
 import com.ohnana.tipflip.interfaces.TipFlipService;
 
 import org.parceler.Parcels;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class OffersFragment extends CustomFragment implements View.OnClickListener {
@@ -27,9 +24,6 @@ public class OffersFragment extends CustomFragment implements View.OnClickListen
     public static String TAG = "OFFERSFRAGMENT";
     private TipFlipService service;
     private List<Offer> offers;
-    private ListView mListView;
-    private List<Offer> mAdapterItems = new ArrayList<>();
-    private OfferListAdapter myAdapter;
     private RecyclerView mRecycleView;
 
 
