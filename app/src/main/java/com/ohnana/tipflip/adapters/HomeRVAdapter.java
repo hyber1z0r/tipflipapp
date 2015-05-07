@@ -43,15 +43,28 @@ public class HomeRVAdapter extends RecyclerView.Adapter<HomeRVAdapter.OfferViewH
 
         holder.center.setText("Lyngby Storcenter");
         holder.butik.setText(o.getStore().getName());
-        holder.rabat.setText("Rabat " + o.getDiscount());
+        holder.rabat.setText(o.getDiscount());
         holder.desc.setText("Der er " + o.getDiscount() + " på " + o.getOffer());
+
         Date exp = o.getExpiration();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd 'kl.' HH:mm", Locale.ENGLISH);
         holder.expDate.setText(formatter.format(exp));
+
         String base64Image = o.getStore().getImage();
         byte[] image = Base64.decode(base64Image, Base64.DEFAULT);
         Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
         holder.butikPhoto.setImageBitmap(bitmap);
+
+        base64Image = o.getImage();
+        if(base64Image != null){
+            image = Base64.decode(base64Image, Base64.DEFAULT);
+            bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
+            holder.offerPhoto.setImageBitmap(bitmap);
+        } else {
+            // for now, set the app icon if no offer photo is available
+            holder.offerPhoto.setImageResource(R.mipmap.ic_launcher_tf);
+        }
+
         YoYo.with(Techniques.FadeIn)
                 .duration(1000)
                 .playOn(holder.cv);
@@ -74,7 +87,9 @@ public class HomeRVAdapter extends RecyclerView.Adapter<HomeRVAdapter.OfferViewH
         TextView butik;
         TextView desc;
         ImageView butikPhoto;
+        ImageView offerPhoto;
         TextView expDate;
+        TextView status;
 
         OfferViewHolder(View itemView) {
             super(itemView);
@@ -82,9 +97,11 @@ public class HomeRVAdapter extends RecyclerView.Adapter<HomeRVAdapter.OfferViewH
             center = (TextView) itemView.findViewById(R.id.cardview_center);
             butik = (TextView) itemView.findViewById(R.id.cardview_butik);
             rabat = (TextView) itemView.findViewById(R.id.cardview_rabat);
-            butikPhoto = (ImageView) itemView.findViewById(R.id.cardview_image);
+            butikPhoto = (ImageView) itemView.findViewById(R.id.cardview_imageStore);
+            offerPhoto = (ImageView) itemView.findViewById(R.id.cardview_imageOffer);
             desc = (TextView) itemView.findViewById(R.id.cardview_desc);
             expDate = (TextView) itemView.findViewById(R.id.cardview_exp);
+            status = (TextView) itemView.findViewById(R.id.cardview_status);
         }
     }
 }

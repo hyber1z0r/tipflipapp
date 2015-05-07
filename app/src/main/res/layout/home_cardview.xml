@@ -1,95 +1,161 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <!-- A CardView that contains a TextView -->
     <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:id="@+id/home_card_view"
-        android:layout_gravity="center"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        card_view:cardCornerRadius="4dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginEnd="10dp"
+        android:layout_height="120dp"
+        android:layout_gravity="center"
         android:layout_marginBottom="5dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="5dp"
-        >
+        card_view:cardCornerRadius="4dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp">
+
+            <ImageView
+                android:id="@+id/cardview_imageStore"
+                android:layout_width="64dp"
+                android:layout_height="12dp"
+                android:contentDescription="storephoto"
+                android:src="@drawable/matas_logo"
+                android:layout_alignTop="@+id/cardview_exp"
+                android:layout_alignLeft="@+id/cardview_imageOffer"
+                android:layout_alignStart="@+id/cardview_imageOffer" />
+
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:id="@+id/cardview_imageOffer"
+                android:src="@mipmap/ic_launcher_tf"
+                android:contentDescription="offerimage"
+                android:layout_below="@+id/cardview_butik"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginRight="26dp"
+                android:layout_marginEnd="26dp" />
 
             <TextView
-                android:id="@+id/cardview_center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="10%"
+                android:id="@+id/cardview_rabat"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:textSize="16sp"
+                android:textColor="#ff929292" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="matas"
+                android:id="@+id/cardview_butik"
+                android:layout_marginLeft="4dp"
+                android:layout_marginStart="4dp"
+                android:textSize="10sp"
+                android:textColor="#3792FF"
+                android:layout_alignBottom="@+id/cardview_rabat"
+                android:layout_toRightOf="@+id/cardview_rabat"
+                android:layout_toEndOf="@+id/cardview_rabat"
+                android:layout_marginBottom="2dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="in"
+                android:id="@+id/cardview_in"
+                android:textSize="10sp"
+                android:layout_alignTop="@+id/cardview_butik"
+                android:layout_toRightOf="@+id/cardview_butik"
+                android:layout_toEndOf="@+id/cardview_butik"
+                android:layout_marginLeft="4dp"
+                android:layout_marginStart="4dp"
+                android:textColor="#ff929292" />
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Lyngby Storcenter"
-                android:textSize="24sp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginStart="10dp"
-                android:layout_alignTop="@+id/cardview_image"
-                android:layout_toRightOf="@+id/cardview_image"
-                android:layout_toEndOf="@+id/cardview_image"
-                android:paddingRight="5dp" />
+                android:id="@+id/cardview_center"
+                android:layout_marginLeft="4dp"
+                android:layout_marginStart="4dp"
+                android:textSize="10sp"
+                android:textColor="#3792FF"
+                android:layout_alignBottom="@+id/cardview_in"
+                android:layout_toRightOf="@+id/cardview_in"
+                android:layout_toEndOf="@+id/cardview_in" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
+                android:id="@+id/cardview_desc"
+                android:layout_alignLeft="@+id/cardview_rabat"
+                android:layout_alignStart="@+id/cardview_rabat"
+                android:layout_toStartOf="@+id/cardview_imageOffer"
+                android:layout_marginRight="5dp"
+                android:layout_alignBottom="@+id/cardview_imageOffer"
+                android:textColor="#222222"
+                android:password="false"
+                android:textStyle="bold"
+                android:textSize="14dp"
+                android:layout_alignTop="@+id/cardview_imageOffer" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="active"
+                android:id="@+id/cardview_status"
+                android:layout_alignParentBottom="true"
+                android:layout_alignLeft="@+id/cardview_desc"
+                android:layout_alignStart="@+id/cardview_desc"
+                android:textSize="10sp"
+                android:textColor="#ff1b9901" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="\u2022"
+                android:id="@+id/cardview_bullet"
+                android:layout_alignParentBottom="true"
+                android:textSize="10sp"
+                android:layout_toRightOf="@+id/cardview_status"
+                android:layout_marginLeft="4dp"
+                android:textColor="#ff929292" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="06/05/2015 kl. 12:00"
+                android:id="@+id/cardview_exp"
+                android:layout_alignParentBottom="true"
+                android:layout_toRightOf="@+id/cardview_bullet"
+                android:layout_toEndOf="@+id/cardview_bullet"
+                android:textSize="10sp"
+                android:layout_marginLeft="4dp"
+                android:textColor="#ff929292" />
 
             <ImageView
-                android:layout_width="72dp"
-                android:layout_height="72dp"
-                android:id="@+id/cardview_image"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:id="@+id/cardview_chevron"
                 android:layout_centerVertical="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginLeft="10dp"
-                android:layout_marginStart="10dp"
-                android:src="@drawable/matas_logo" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Matas"
-                android:id="@+id/cardview_butik"
-                android:textSize="18sp"
-                android:layout_below="@+id/cardview_center"
-                android:layout_alignLeft="@+id/cardview_center"
-                android:layout_alignStart="@+id/cardview_center"
-                android:layout_marginTop="14dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Rabat 20%"
-                android:id="@+id/cardview_rabat"
-                android:textColor="#ff06abff"
-                android:paddingRight="5dp"
-                android:layout_alignBottom="@+id/cardview_butik"
-                android:layout_alignRight="@+id/cardview_center"
-                android:layout_alignEnd="@+id/cardview_center" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Der er 20% på vatrundeller fra kl. 12:00 til 16:00, kun i dag!"
-                android:id="@+id/cardview_desc"
-                android:layout_below="@+id/cardview_rabat"
-                android:layout_alignLeft="@+id/cardview_butik"
-                android:layout_alignStart="@+id/cardview_butik"
-                android:layout_marginTop="19dp"
-                android:paddingRight="5dp"
-                android:paddingBottom="10dp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="EXPDATE"
-                android:id="@+id/cardview_exp"
-                android:layout_alignBottom="@+id/cardview_desc"
-                android:layout_alignLeft="@+id/cardview_image"
-                android:layout_alignStart="@+id/cardview_image"
-                android:layout_marginBottom="10dp"
-                android:textColor="#ff78e177" />
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/chevron_right" />
         </RelativeLayout>
     </android.support.v7.widget.CardView>
 </LinearLayout>
