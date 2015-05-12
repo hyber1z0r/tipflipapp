@@ -1,7 +1,10 @@
 package com.ohnana.tipflip.adapters;
 
+import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
@@ -26,8 +29,11 @@ import java.util.Locale;
  */
 public class HomeRVAdapter extends RecyclerView.Adapter<HomeRVAdapter.OfferViewHolder> {
     private List<Offer> offers;
+    private Context activity;
 
-    public HomeRVAdapter(List<Offer> offers) {
+    public HomeRVAdapter(Activity activity, List<Offer> offers) {
+
+        this.activity = activity;
         this.offers = offers;
     }
 
@@ -50,13 +56,21 @@ public class HomeRVAdapter extends RecyclerView.Adapter<HomeRVAdapter.OfferViewH
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd 'kl.' HH:mm", Locale.ENGLISH);
         holder.expDate.setText(formatter.format(exp));
 
+        if (exp.before(new Date())) {
+            holder.status.setTextColor(activity.getResources().getColor(R.color.notactive_offer));
+            holder.status.setText("expired");
+        } else {
+            holder.status.setTextColor(activity.getResources().getColor(R.color.active_offer));
+            holder.status.setText("active");
+        }
+
         String base64Image = o.getStore().getImage();
         byte[] image = Base64.decode(base64Image, Base64.DEFAULT);
         Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
         holder.butikPhoto.setImageBitmap(bitmap);
 
         base64Image = o.getImage();
-        if(base64Image != null){
+        if (base64Image != null) {
             image = Base64.decode(base64Image, Base64.DEFAULT);
             bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
             holder.offerPhoto.setImageBitmap(bitmap);

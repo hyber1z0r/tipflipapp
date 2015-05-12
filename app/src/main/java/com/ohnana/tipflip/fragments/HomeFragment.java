@@ -41,7 +41,7 @@ public class HomeFragment extends CustomFragment {
         Profile profile = Parcels.unwrap(getArguments().getParcelable("profile"));
         if(profile != null) {
             List<Offer> offers = profile.getOffers();
-            HomeRVAdapter mAdapter = new HomeRVAdapter(offers);
+            HomeRVAdapter mAdapter = new HomeRVAdapter(ma, offers);
             mRecycleView.setAdapter(mAdapter);
         } else {
             Log.i(TAG, "profile parcelable was null");

@@ -12,4 +12,6 @@
     <color name="blue_semi_transparent">#805677fc</color>
     <color name="blue_semi_transparent_pressed">#80738ffe</color>
     <color name="tipflip_blue">#25a8e8</color>
+    <color name="active_offer">#ff1b9901</color>
+    <color name="notactive_offer">#c90000</color>
 </resources>

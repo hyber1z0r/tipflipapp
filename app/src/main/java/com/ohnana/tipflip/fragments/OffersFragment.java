@@ -44,7 +44,7 @@ public class OffersFragment extends CustomFragment implements View.OnClickListen
         LinearLayoutManager llm = new LinearLayoutManager(ma);
         mRecycleView.setLayoutManager(llm);
         this.offers = Parcels.unwrap(getArguments().getParcelable("offers"));
-        HomeRVAdapter mAdapter = new HomeRVAdapter(offers);
+        HomeRVAdapter mAdapter = new HomeRVAdapter(ma, offers);
         mRecycleView.setAdapter(mAdapter);
         mRecycleView.addOnItemTouchListener(
                 new RecyclerItemClickListener(ma, new RecyclerItemClickListener.OnItemClickListener() {

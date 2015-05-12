@@ -123,7 +123,7 @@
                 android:layout_alignLeft="@+id/cardview_desc"
                 android:layout_alignStart="@+id/cardview_desc"
                 android:textSize="10sp"
-                android:textColor="#ff1b9901" />
+                android:textColor="@color/active_offer" />
 
             <TextView
                 android:layout_width="wrap_content"
