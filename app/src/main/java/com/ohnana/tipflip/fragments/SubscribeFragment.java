@@ -1,5 +1,6 @@
 package com.ohnana.tipflip.fragments;
 
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -15,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
@@ -22,6 +24,7 @@ import com.hudomju.swipe.SwipeToDismissTouchListener;
 import com.hudomju.swipe.adapter.ListViewAdapter;
 import com.ohnana.tipflip.adapters.CategoryListAdapter;
 import com.ohnana.tipflip.MainActivity;
+import com.ohnana.tipflip.listeners.ProfileSaveHandler;
 import com.ohnana.tipflip.model.Profile;
 import com.ohnana.tipflip.R;
 import com.ohnana.tipflip.model.Category;
@@ -38,8 +41,8 @@ public class SubscribeFragment extends CustomFragment {
     private Profile profile;
     private List<Category> categories; // holds the categories in the button menu
     private FloatingActionsMenu mFloatingsMenu;
-    private List<Category> mAdapterItems;
     private CategoryListAdapter myAdapter;
+    private ProfileSaveHandler mCallback;
 
     public SubscribeFragment() {
     }
@@ -59,57 +62,74 @@ public class SubscribeFragment extends CustomFragment {
         return rootView;
     }
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        // This makes sure that the container activity has implemented
+        // the callback interface. If not, it throws an exception
+        try {
+            mCallback = (ProfileSaveHandler) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement ProfileSaveHandler");
+        }
+    }
+
     private void init(View rootView) {
         Profile p = Parcels.unwrap(getArguments().getParcelable("profile"));
-        if(p == null){
+        List<Category> cats = Parcels.unwrap(getArguments().getParcelable("categories"));
+        if (p == null || cats == null) {
+            Toast.makeText(ma, "There was an error loading profile info.", Toast.LENGTH_SHORT).show();
+        } else {
+            this.profile = p;
+            this.categories = cats;
+            List<Category> mAdapterItems = this.profile.getCategories();
+            final ListView mListView = (ListView) rootView.findViewById(R.id.listViewSubscribe);
+            myAdapter = new CategoryListAdapter(ma, mAdapterItems);
+            mListView.setAdapter(myAdapter);
 
-        }
-        this.profile = p;
-        this.categories = Parcels.unwrap(getArguments().getParcelable("categories"));
-        mAdapterItems = this.profile.getCategories();
-        final ListView mListView = (ListView) rootView.findViewById(R.id.listViewSubscribe);
-        myAdapter = new CategoryListAdapter(ma, mAdapterItems);
-        mListView.setAdapter(myAdapter);
+            final SwipeToDismissTouchListener<ListViewAdapter> touchListener = new SwipeToDismissTouchListener<>(
+                    new ListViewAdapter(mListView),
+                    new SwipeToDismissTouchListener.DismissCallbacks<ListViewAdapter>() {
+                        @Override
+                        public boolean canDismiss(int position) {
+                            return true;
+                        }
 
-        final SwipeToDismissTouchListener<ListViewAdapter> touchListener = new SwipeToDismissTouchListener<>(
-                new ListViewAdapter(mListView),
-                new SwipeToDismissTouchListener.DismissCallbacks<ListViewAdapter>() {
-                    @Override
-                    public boolean canDismiss(int position) {
-                        return true;
+                        @Override
+                        public void onDismiss(ListViewAdapter listViewAdapter, int i) {
+                            Category temp = (Category) myAdapter.getItem(i);
+                            categories.add(temp);
+                            addButton(temp);
+                            myAdapter.remove(i);
+                            ma.hideSaveMenuItem(false);
+                            // should i set the profile.categories ?? we'll see
+                        }
+                    });
+            mListView.setOnTouchListener(touchListener);
+            mListView.setOnScrollListener((AbsListView.OnScrollListener) touchListener.makeScrollListener());
+            mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView parent, View view, int position, long id) {
+                    if (touchListener.existPendingDismisses()) {
+                        touchListener.undoPendingDismiss();
+                    } else {
                     }
+                }
+            });
 
-                    @Override
-                    public void onDismiss(ListViewAdapter listViewAdapter, int i) {
-                        Category temp = (Category) myAdapter.getItem(i);
-                        categories.add(temp);
-                        addButton(temp);
-                        myAdapter.remove(i);
+            mFloatingsMenu = (FloatingActionsMenu) rootView.findViewById(R.id.multiple_actions);
+
+            // Only add those that the users doesn't subscribe to, to the button menu.
+            for (Category cat : mAdapterItems) {
+                for (int i = 0; i < this.categories.size(); i++) {
+                    if (cat.getName().equals(this.categories.get(i).getName())) {
+                        this.categories.remove(i);
                     }
-                });
-        mListView.setOnTouchListener(touchListener);
-        mListView.setOnScrollListener((AbsListView.OnScrollListener) touchListener.makeScrollListener());
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView parent, View view, int position, long id) {
-                if (touchListener.existPendingDismisses()) {
-                    touchListener.undoPendingDismiss();
-                } else {
                 }
             }
-        });
-
-        mFloatingsMenu = (FloatingActionsMenu) rootView.findViewById(R.id.multiple_actions);
-
-        // Only add those that the users doesn't subscribe to, to the button menu.
-        for (Category cat : mAdapterItems) {
-            for (int i = 0; i < this.categories.size(); i++) {
-                if (cat.getName().equals(this.categories.get(i).getName())) {
-                    this.categories.remove(i);
-                }
-            }
+            loadButtons();
         }
-        loadButtons();
     }
 
     private void addButton(final Category c) {
@@ -130,6 +150,7 @@ public class SubscribeFragment extends CustomFragment {
                 myAdapter.add(c);
                 mFloatingsMenu.collapse();
                 mFloatingsMenu.removeButton(newButton);
+                ma.hideSaveMenuItem(false);
             }
         });
 

@@ -64,7 +64,9 @@ public class GcmIntentService extends IntentService {
 
         // A PendingIntent assures that who ever we give it to, can run the code with our permissions!
         // If it was a normal intent, it could only run it with it's own permissions.
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0);
+        Intent i = new Intent(this, MainActivity.class);
+        i.putExtra("com.ohnana.tipflip.notifyId", NOTIFICATION_ID);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, i, 0);
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.mipmap.ic_launcher_tf) /* MUST! */

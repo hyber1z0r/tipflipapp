@@ -13,6 +13,7 @@ import retrofit.Callback;
 import retrofit.http.Body;
 import retrofit.http.GET;
 import retrofit.http.POST;
+import retrofit.http.PUT;
 import retrofit.http.Query;
 
 /**
@@ -30,4 +31,7 @@ public interface TipFlipService {
 
     @GET("/offers")
     void getAllOffers(Callback<List<Offer>> cb);
+
+    @PUT("/profile")
+    void updateProfile(@Body Profile body, Callback<JSONObject> cb);
 }

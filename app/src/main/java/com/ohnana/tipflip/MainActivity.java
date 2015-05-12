@@ -37,9 +37,11 @@ import com.ohnana.tipflip.fragments.LocationFragment;
 import com.ohnana.tipflip.fragments.OffersFragment;
 import com.ohnana.tipflip.fragments.ProfileFragment;
 import com.ohnana.tipflip.fragments.SubscribeFragment;
+import com.ohnana.tipflip.gcm.GcmIntentService;
 import com.ohnana.tipflip.interfaces.DownloadObserver;
 import com.ohnana.tipflip.interfaces.TipFlipService;
 import com.ohnana.tipflip.listeners.DataDownloadedListener;
+import com.ohnana.tipflip.listeners.ProfileSaveHandler;
 import com.ohnana.tipflip.model.Category;
 import com.ohnana.tipflip.model.Offer;
 import com.ohnana.tipflip.model.Profile;
@@ -60,7 +62,7 @@ import retrofit.converter.GsonConverter;
 
 
 public class MainActivity extends ActionBarActivity implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, DownloadObserver {
+        GoogleApiClient.OnConnectionFailedListener, DownloadObserver, ProfileSaveHandler {
 
     /**
      * Google Cloud Messaging attributes
@@ -101,12 +103,23 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
     private List<Category> categories;
     private DataDownloadedListener downloadListener;
     private int selectedFragment;
+    private boolean HIDE_SAVE = true;
+    private Menu menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = getApplicationContext();
+
+        Bundle intent_extras = getIntent().getExtras();
+        if (intent_extras != null && intent_extras.containsKey("com.ohnana.tipflip.notifyId")) {
+            if (intent_extras.getInt("com.ohnana.tipflip.notifyId") == GcmIntentService.NOTIFICATION_ID) {
+                selectedFragment = 0;
+            }
+        } else {
+            selectedFragment = -1;
+        }
         init();
         loadProfile();
         loadOffers();
@@ -189,7 +202,6 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
 
         downloadListener = new DataDownloadedListener();
         downloadListener.registerObserver(this);
-        selectedFragment = -1;
     }
 
     private void loadProfile() {
@@ -361,7 +373,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
             default:
                 fragment = HomeFragment.getInstance();
         }
-        if(selectedFragment != position) {
+        if (selectedFragment != position) {
             fragment.setArguments(bundle);
             // Insert the fragment by replacing any existing fragment
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -529,6 +541,12 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        if (HIDE_SAVE) {
+            menu.getItem(0).setVisible(false);
+        } else {
+            menu.getItem(0).setVisible(true);
+        }
+        this.menu = menu;
         return true;
     }
 
@@ -544,8 +562,43 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
         if (id == R.id.action_settings) {
             return true;
         }
-
+        if(id == R.id.saveCategories) {
+            item.setActionView(R.layout.progress_wheel);
+            saveProfileChanges();
+            return true;
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void hideSaveMenuItem(boolean hide) {
+        HIDE_SAVE = hide;
+        // this calls onCreateOptionsMenu!
+        menu.getItem(0).setActionView(null);
+        invalidateOptionsMenu();
+    }
+
+    // subscribe fragment can call this whenever a user make changes to his/her subscriptions.
+    @Override
+    public void profileChanged(Profile p) {
+        this.profile = p;
+    }
+
+    // saves the changes made to the profile to our webserver
+    public void saveProfileChanges() {
+        service.updateProfile(this.profile, new Callback<JSONObject>() {
+            @Override
+            public void success(JSONObject jsonObject, Response response) {
+                Toast.makeText(MainActivity.this, "Success", Toast.LENGTH_SHORT).show();
+                hideSaveMenuItem(true);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Toast.makeText(MainActivity.this, "Error in updating profile", Toast.LENGTH_LONG).show();
+                hideSaveMenuItem(true);
+            }
+
+        });
     }
 
     @Override
