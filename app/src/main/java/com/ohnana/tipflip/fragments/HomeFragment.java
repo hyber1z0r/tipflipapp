@@ -3,9 +3,11 @@ package com.ohnana.tipflip.fragments;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.ohnana.tipflip.adapters.HomeRVAdapter;
 import com.ohnana.tipflip.MainActivity;
@@ -23,8 +25,6 @@ public class HomeFragment extends CustomFragment {
     private MainActivity ma;
     private static HomeFragment instance;
     public static String TAG = "HOMEFRAGMENT";
-    private RecyclerView mRecycleView;
-    private Profile profile;
 
     @Override
     protected boolean canGoBack() {
@@ -35,16 +35,20 @@ public class HomeFragment extends CustomFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.home_view, container, false);
         ma = (MainActivity) getActivity();
-        mRecycleView = (RecyclerView) rootView.findViewById(R.id.home_recview);
+        RecyclerView mRecycleView = (RecyclerView) rootView.findViewById(R.id.home_recview);
         LinearLayoutManager llm = new LinearLayoutManager(ma);
         mRecycleView.setLayoutManager(llm);
-        this.profile = Parcels.unwrap(getArguments().getParcelable("profile"));
-        List<Offer> offers = profile.getOffers();
-        HomeRVAdapter mAdapter = new HomeRVAdapter(offers);
-        mRecycleView.setAdapter(mAdapter);
+        Profile profile = Parcels.unwrap(getArguments().getParcelable("profile"));
+        if(profile != null) {
+            List<Offer> offers = profile.getOffers();
+            HomeRVAdapter mAdapter = new HomeRVAdapter(offers);
+            mRecycleView.setAdapter(mAdapter);
+        } else {
+            Log.i(TAG, "profile parcelable was null");
+            Toast.makeText(ma, "Unable to load profile settings", Toast.LENGTH_SHORT).show();
+        }
         return rootView;
     }
-
 
     public HomeFragment() {
     }
@@ -55,5 +59,4 @@ public class HomeFragment extends CustomFragment {
         }
         return instance;
     }
-
 }

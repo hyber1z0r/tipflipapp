@@ -67,7 +67,7 @@ public class GcmIntentService extends IntentService {
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0);
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.mipmap.ic_launcher) /* MUST! */
+                .setSmallIcon(R.mipmap.ic_launcher_tf) /* MUST! */
                 .setContentTitle("TipFlip") /* MUST! */
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(msg))
                 .setContentText(msg); /* MUST! */

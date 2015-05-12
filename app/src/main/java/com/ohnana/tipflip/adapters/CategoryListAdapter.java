@@ -46,16 +46,16 @@ public class CategoryListAdapter extends BaseAdapter {
         return position;
     }
 
-
-    public void remove(int position){
+    public synchronized void remove(int position) {
         this.categories.remove(position);
         this.notifyDataSetChanged();
     }
 
-    public void add(Category c){
+    public synchronized void add(Category c) {
         this.categories.add(c);
         this.notifyDataSetChanged();
     }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (inflater == null) {

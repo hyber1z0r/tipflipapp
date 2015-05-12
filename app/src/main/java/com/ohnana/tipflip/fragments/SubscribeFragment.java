@@ -60,7 +60,11 @@ public class SubscribeFragment extends CustomFragment {
     }
 
     private void init(View rootView) {
-        this.profile = Parcels.unwrap(getArguments().getParcelable("profile"));
+        Profile p = Parcels.unwrap(getArguments().getParcelable("profile"));
+        if(p == null){
+
+        }
+        this.profile = p;
         this.categories = Parcels.unwrap(getArguments().getParcelable("categories"));
         mAdapterItems = this.profile.getCategories();
         final ListView mListView = (ListView) rootView.findViewById(R.id.listViewSubscribe);
@@ -106,12 +110,6 @@ public class SubscribeFragment extends CustomFragment {
             }
         }
         loadButtons();
-    }
-
-
-    @Override
-    protected boolean canGoBack() {
-        return true;
     }
 
     private void addButton(final Category c) {
@@ -164,5 +162,10 @@ public class SubscribeFragment extends CustomFragment {
         for (Category cat : this.categories) {
             addButton(cat);
         }
+    }
+
+    @Override
+    protected boolean canGoBack() {
+        return true;
     }
 }
