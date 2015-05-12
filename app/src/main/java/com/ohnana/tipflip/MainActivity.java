@@ -15,6 +15,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -594,7 +595,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
 
             @Override
             public void failure(RetrofitError error) {
-                Toast.makeText(MainActivity.this, "Error in updating profile", Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, "Error in updating profile. Try again!", Toast.LENGTH_LONG).show();
                 hideSaveMenuItem(true);
             }
 
