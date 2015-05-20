@@ -1,31 +1,67 @@
 package com.ohnana.tipflip;
 
+import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.ohnana.tipflip.interfaces.TipFlipService;
+
+import org.json.JSONObject;
+
+import java.net.UnknownHostException;
+
+import retrofit.Callback;
+import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+import retrofit.converter.GsonConverter;
+
 
 public class SplashScreen extends ActionBarActivity {
+    private TipFlipService api;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
-        Thread timerThread = new Thread(){
-            public void run(){
-                try{
-                    sleep(3000);
-                }catch(InterruptedException e){
-                    e.printStackTrace();
-                }finally{
+        RestAdapter restAdapter = new RestAdapter.Builder()
+                .setEndpoint("http://tipflip.herokuapp.com")
+                .setLogLevel(RestAdapter.LogLevel.BASIC)
+                .build();
+        api = restAdapter.create(TipFlipService.class);
+        new AsyncTask<Void, Void, Integer>() {
+            @Override
+            protected Integer doInBackground(Void... params) {
+                try {
+                    api.pingServer();
+                } catch (Exception ex) {
+                    return -1;
+                }
+                return 0;
+            }
+
+            @Override
+            protected void onPostExecute(Integer resultCode) {
+                super.onPostExecute(resultCode);
+                if(resultCode != -1) {
                     Intent i = new Intent("com.ohnana.tipflip.MAINACTIVITY");
                     startActivity(i);
+                } else {
+                    new AlertDialog.Builder(SplashScreen.this)
+                            .setTitle("Error")
+                            .setMessage("Could not connect to the internet")
+                            .setNeutralButton("OK", null)
+                            .create()
+                            .show();
                 }
+
             }
-        };
-        timerThread.start();
+        }.execute(null, null, null);
     }
 
     @Override
