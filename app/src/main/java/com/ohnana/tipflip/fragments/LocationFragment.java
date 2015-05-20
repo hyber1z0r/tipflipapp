@@ -33,7 +33,7 @@ public class LocationFragment extends CustomFragment implements View.OnClickList
     private static LocationFragment instance;
     private static String TAG = "LocationFragment";
     private Location location;
-    private Marker myMarker;
+    private Marker myMarker, lyngbyMarker;
 
     // Declare a variable for the cluster manager.
     private ClusterManager<Store> mClusterManager;
@@ -105,10 +105,18 @@ public class LocationFragment extends CustomFragment implements View.OnClickList
             map.setMyLocationEnabled(true);
             LatLng YOU = new LatLng(location.getLatitude(), location.getLongitude());
 
-          myMarker = map.addMarker(new MarkerOptions().position(YOU).icon(BitmapDescriptorFactory.fromResource(R.drawable.here1))
+            LatLng LyngbyStorcenter = new LatLng(55.772002,12.50649);
+
+            myMarker = map.addMarker(new MarkerOptions().position(YOU).icon(BitmapDescriptorFactory.fromResource(R.drawable.here1))
                     .title("HEYHEY!")
                     .snippet("Du er her"));
 
+            lyngbyMarker = map.addMarker(new MarkerOptions().position(LyngbyStorcenter).icon(BitmapDescriptorFactory.fromResource(R.drawable.shoppingicon))
+                    .title("Lyngby Storcenter"));
+
+
+            myMarker.showInfoWindow();
+            lyngbyMarker.showInfoWindow();
 //            map.addMarker(new MarkerOptions().position(YOU)
 //                    .title("HEYHEY!")
 //                    .snippet("Du er her"));
@@ -128,7 +136,6 @@ public class LocationFragment extends CustomFragment implements View.OnClickList
         stores.add(new Store("1", "Vuks house", "", "55.7375619,12.4559613"));
         stores.add(new Store("2", "Jakobs house", "", "55.742937,12.511377"));
         stores.add(new Store("3", "Damjans flat", "", "55.9362936,12.3164437"));
-        stores.add(new Store("4", "Elgiganten", "", "55.772002,12.50649"));
 
 
         mClusterManager.addItems(stores);
