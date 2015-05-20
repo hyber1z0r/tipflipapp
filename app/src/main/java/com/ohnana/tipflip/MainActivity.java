@@ -183,6 +183,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
                 registerInBackground();
             }
             buildGoogleApiClient();
+            getLocation();
         } else {
             Log.i(TAG, "No valid Google Play Services APK found.");
         }
@@ -199,8 +200,6 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
                 .setConverter(new GsonConverter(gson))
                 .build();
         service = restAdapter.create(TipFlipService.class);
-        getLocation();
-
         downloadListener = new DataDownloadedListener();
         downloadListener.registerObserver(this);
     }
@@ -607,13 +606,13 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
     protected void onResume() {
         super.onResume();
         checkPlayServices();
-        getLocation();
+//        getLocation();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         checkPlayServices();
-        getLocation();
+       // getLocation();
     }
 }

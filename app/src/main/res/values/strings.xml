@@ -17,4 +17,5 @@
     <string name="deleted">Slettet</string>
     <string name="undo">FORTRYD</string>
     <string name="title_activity_offer_detail">OfferDetailActivity</string>
+    <string name="title_activity_splash_screen">SplashScreen</string>
 </resources>

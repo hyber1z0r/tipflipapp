@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
@@ -16,8 +15,8 @@ import android.widget.TextView;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
-import com.ohnana.tipflip.model.Offer;
 import com.ohnana.tipflip.R;
+import com.ohnana.tipflip.model.Offer;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -91,7 +90,7 @@ public class HomeRVAdapter extends RecyclerView.Adapter<HomeRVAdapter.OfferViewH
 
     @Override
     public int getItemCount() {
-        return offers.size();
+        return offers == null ? -1 : offers.size();
     }
 
     public static class OfferViewHolder extends RecyclerView.ViewHolder {

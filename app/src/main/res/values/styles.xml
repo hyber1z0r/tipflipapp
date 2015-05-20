@@ -6,6 +6,9 @@
         <item name="android:colorPrimary" tools:targetApi="21">@color/tipflip_blue</item>
         <item name="android:actionBarStyle">@style/CustomActionBar</item>
     </style>
+    <style name="SplashTheme" parent="Theme.AppCompat.Light.NoActionBar">
+
+    </style>
 
     <style name="CustomActionBar" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="android:background">@drawable/tipflipblue</item>

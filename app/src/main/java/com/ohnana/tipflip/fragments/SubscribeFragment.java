@@ -42,7 +42,8 @@ public class SubscribeFragment extends CustomFragment {
     private List<Category> categories; // holds the categories in the button menu
     private FloatingActionsMenu mFloatingsMenu;
     private CategoryListAdapter myAdapter;
-    private ProfileSaveHandler mCallback;
+    private ProfileSaveHandler mCallback; // this is not even used, but it still works. why???
+    // can i remove it? that would be nice.
 
     public SubscribeFragment() {
     }

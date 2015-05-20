@@ -33,7 +33,7 @@ public class CategoryListAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return categories.size();
+        return categories == null ? -1 : categories.size();
     }
 
     @Override
