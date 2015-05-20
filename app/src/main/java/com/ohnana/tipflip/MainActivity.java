@@ -387,6 +387,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
         mDrawerList.setItemChecked(position, true);
         setTitle(mDrawerTitles.get(position).getTitle());
         mDrawerLayout.closeDrawer(mDrawerList);
+
     }
 
 
