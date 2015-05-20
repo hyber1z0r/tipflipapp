@@ -15,7 +15,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -76,7 +75,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
     private GoogleCloudMessaging gcm;
     private Context context;
     private String regid;
-    private TipFlipService service;
+    private TipFlipService api;
 
     /**
      * Location attributes
@@ -199,13 +198,13 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
                 .setLogLevel(RestAdapter.LogLevel.BASIC)
                 .setConverter(new GsonConverter(gson))
                 .build();
-        service = restAdapter.create(TipFlipService.class);
+        api = restAdapter.create(TipFlipService.class);
         downloadListener = new DataDownloadedListener();
         downloadListener.registerObserver(this);
     }
 
     private void loadProfile() {
-        service.getProfile(getRegistrationId(this), new Callback<Profile>() {
+        api.getProfile(getRegistrationId(this), new Callback<Profile>() {
             @Override
             public void success(Profile profile, Response response) {
                 MainActivity.this.profile = profile;
@@ -220,7 +219,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
     }
 
     private void loadOffers() {
-        service.getAllOffers(new Callback<List<Offer>>() {
+        api.getAllOffers(new Callback<List<Offer>>() {
             @Override
             public void success(List<Offer> offers, Response response) {
                 MainActivity.this.offers = offers;
@@ -235,7 +234,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
     }
 
     private void loadCategories() {
-        service.getCategories(new Callback<List<Category>>() {
+        api.getCategories(new Callback<List<Category>>() {
             @Override
             public void success(List<Category> categories, Response response) {
                 MainActivity.this.categories = categories;
@@ -427,7 +426,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
     }
 
     /**
-     * Gets the current registration ID for application on GCM service, if there is one.
+     * Gets the current registration ID for application on GCM api, if there is one.
      * <p/>
      * If result is empty, the app needs to register.
      *
@@ -513,7 +512,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
     private void sendRegistrationIdToBackend() {
         HashMap<String, String> map = new HashMap<>();
         map.put("regid", regid);
-        service.saveRegId(map, new Callback<JSONObject>() {
+        api.saveRegId(map, new Callback<JSONObject>() {
             @Override
             public void success(JSONObject jsonObject, Response response) {
                 Log.i(TAG, "Successfully registered regid to node.js server");
@@ -586,7 +585,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
 
     // saves the changes made to the profile to our webserver
     public void saveProfileChanges() {
-        service.updateProfile(this.profile, new Callback<JSONObject>() {
+        api.updateProfile(this.profile, new Callback<JSONObject>() {
             @Override
             public void success(JSONObject jsonObject, Response response) {
                 Toast.makeText(MainActivity.this, "Success", Toast.LENGTH_SHORT).show();

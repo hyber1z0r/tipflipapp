@@ -34,4 +34,7 @@ public interface TipFlipService {
 
     @PUT("/profile")
     void updateProfile(@Body Profile body, Callback<JSONObject> cb);
+
+    @GET("/ping")
+    JSONObject pingServer();
 }
