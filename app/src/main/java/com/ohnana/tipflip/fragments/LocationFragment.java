@@ -35,6 +35,7 @@ public class LocationFragment extends CustomFragment implements View.OnClickList
     private Location location;
     private Marker myMarker, lyngbyMarker;
 
+
     // Declare a variable for the cluster manager.
     private ClusterManager<Store> mClusterManager;
 
@@ -136,6 +137,16 @@ public class LocationFragment extends CustomFragment implements View.OnClickList
         stores.add(new Store("1", "Vuks house", "", "55.7375619,12.4559613"));
         stores.add(new Store("2", "Jakobs house", "", "55.742937,12.511377"));
         stores.add(new Store("3", "Damjans flat", "", "55.9362936,12.3164437"));
+        stores.add(new Store("4", "Fisketorvet", "", "55.6646305,12.5657289"));
+        stores.add(new Store("5", "Fisketorvet", "", "55.6649512,12.566716"));
+        stores.add(new Store("6", "Fisketorvet", "", "55.6654656,12.5657825"));
+        stores.add(new Store("7", "Fisketorvet", "", "55.6654958,12.5662975"));
+        stores.add(new Store("8", "Fisketorvet", "", "55.66457,12.5650208"));
+        stores.add(new Store("9", "Fisketorvet", "", "55.6646729,12.5643127"));
+        stores.add(new Store("10", "Fisketorvet", "", "55.6643098,12.5650315"));
+        stores.add(new Store("11", "Fisketorvet", "", "55.6640193,12.5659435"));
+        stores.add(new Store("12", "Fisketorvet", "", "55.6643582,12.5664585"));
+        stores.add(new Store("13", "Fisketorvet", "", "55.6647515,12.5669413"));
 
 
         mClusterManager.addItems(stores);
